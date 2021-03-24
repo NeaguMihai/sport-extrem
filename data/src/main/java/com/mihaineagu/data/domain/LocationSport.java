@@ -1,0 +1,40 @@
+package com.mihaineagu.data.domain;
+
+import lombok.Data;
+
+import javax.persistence.*;
+
+@Data
+@Entity
+@IdClass(LocationSportId.class)
+@Table(name = "location_sport")
+public class LocationSport {
+
+    @Id
+    @Column(name = "location_id")
+    private Long locationId;
+
+    @Id
+    @Column(name = "sport_id")
+    private Long sportId;
+
+    @ManyToOne
+    @MapsId("location_id")
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+    @ManyToOne
+    @MapsId("sport_id")
+    @JoinColumn(name = "sport_id")
+    private Sport sport;
+
+    @Column(name = "start_period")
+    private String startPeriod;
+
+    @Column(name = "end_period")
+    private String endPeriod;
+
+    @Column(name = "price")
+    private Integer price;
+
+}

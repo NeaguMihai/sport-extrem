@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    initialization-mode: never
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/proiect_PIBD
+    username: ${user_pibd}
+    password: ${parola_user}
+
+  messages:
+    basename: messageBundle/messages
