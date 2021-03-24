@@ -9,7 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class CountryDTO {
 
-    private String locationName;
+    private String countryName;
     private String uri;
     private RegionDTO regionDTO;
 }
