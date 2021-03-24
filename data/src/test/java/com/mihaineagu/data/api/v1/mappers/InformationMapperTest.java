@@ -4,7 +4,7 @@ import com.mihaineagu.data.api.v1.models.InformationDTO;
 import com.mihaineagu.data.api.v1.models.LocationDTO;
 import com.mihaineagu.data.api.v1.models.SportDTO;
 import com.mihaineagu.data.domain.Location;
-import com.mihaineagu.data.domain.LocationSport;
+import com.mihaineagu.data.domain.Information;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,17 +21,17 @@ class InformationMapperTest {
 
     @Test
     void locationSportToInformation() {
-        LocationSport locationSport = new LocationSport();
-        locationSport.setLocation(new Location());
-        locationSport.setPrice(PRICE);
-        locationSport.setStartPeriod(START_PERIOD);
-        locationSport.setEndPeriod(END_PERIOD);
+        Information information = new Information();
+        information.setLocation(new Location());
+        information.setPrice(PRICE);
+        information.setStartPeriod(START_PERIOD);
+        information.setEndPeriod(END_PERIOD);
 
-        InformationDTO informationDTO = informationMapper.locationSportToInformation(locationSport);
+        InformationDTO informationDTO = informationMapper.informationToDTO(information);
 
-        assertEquals(locationSport.getStartPeriod(), informationDTO.getStartingPeriod());
-        assertEquals(locationSport.getEndPeriod(), informationDTO.getEndingPeriod());
-        assertEquals(locationSport.getPrice(), informationDTO.getPrice());
+        assertEquals(information.getStartPeriod(), informationDTO.getStartingPeriod());
+        assertEquals(information.getEndPeriod(), informationDTO.getEndingPeriod());
+        assertEquals(information.getPrice(), informationDTO.getPrice());
 
     }
 
@@ -43,15 +43,15 @@ class InformationMapperTest {
                 .startingPeriod(START_PERIOD)
                 .price(PRICE)
                 .build();
-        LocationSport locationSport = informationMapper.informationToLocationSport(informationDTO);
+        Information information = informationMapper.DTOToInformation(informationDTO);
 
-        assertEquals(informationDTO.getStartingPeriod(), locationSport.getStartPeriod());
-        assertEquals(informationDTO.getEndingPeriod(), locationSport.getEndPeriod());
-        assertEquals(informationDTO.getPrice(), locationSport.getPrice());
-        assertNull(locationSport.getLocation());
-        assertNull(locationSport.getLocationId());
-        assertNull(locationSport.getSport());
-        assertNull(locationSport.getSportId());
+        assertEquals(informationDTO.getStartingPeriod(), information.getStartPeriod());
+        assertEquals(informationDTO.getEndingPeriod(), information.getEndPeriod());
+        assertEquals(informationDTO.getPrice(), information.getPrice());
+        assertNull(information.getLocation());
+        assertNull(information.getLocationId());
+        assertNull(information.getSport());
+        assertNull(information.getSportId());
 
 
     }
@@ -78,14 +78,14 @@ class InformationMapperTest {
                 .uri(URI)
                 .build();
 
-        LocationSport locationSport = informationMapper.locationDTOToLocationSport(locationDTO);
+        Information information = informationMapper.locationDTOToInformation(locationDTO);
 
-        assertEquals(informationDTO.getPrice(), locationSport.getPrice());
-        assertEquals(informationDTO.getStartingPeriod(), locationSport.getStartPeriod());
-        assertEquals(informationDTO.getEndingPeriod(), locationSport.getEndPeriod());
-        assertEquals(sportDTO.getUri(), String.valueOf(locationSport.getSportId()));
-        assertEquals(locationDTO.getUri(), String.valueOf(locationSport.getLocationId()));
-        assertNull(locationSport.getLocation());
-        assertNull(locationSport.getSport());
+        assertEquals(informationDTO.getPrice(), information.getPrice());
+        assertEquals(informationDTO.getStartingPeriod(), information.getStartPeriod());
+        assertEquals(informationDTO.getEndingPeriod(), information.getEndPeriod());
+        assertEquals(sportDTO.getUri(), String.valueOf(information.getSportId()));
+        assertEquals(locationDTO.getUri(), String.valueOf(information.getLocationId()));
+        assertNull(information.getLocation());
+        assertNull(information.getSport());
     }
 }

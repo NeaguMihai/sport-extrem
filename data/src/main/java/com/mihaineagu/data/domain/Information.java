@@ -6,9 +6,9 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@IdClass(LocationSportId.class)
+@IdClass(InformationId.class)
 @Table(name = "location_sport")
-public class LocationSport {
+public class Information {
 
     @Id
     @Column(name = "location_id")

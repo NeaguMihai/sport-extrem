@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationSportId implements Serializable {
+public class InformationId implements Serializable {
 
     private Long locationId;
 
