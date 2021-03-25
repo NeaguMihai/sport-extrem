@@ -24,7 +24,7 @@ public class WebCountryService implements CountryService {
 
 
     @Override
-    public List<CountryDTO> getAllCountries() {
+    public List<CountryDTO> findAllCountries() {
         return countryRepository
                     .findAll()
                     .stream()

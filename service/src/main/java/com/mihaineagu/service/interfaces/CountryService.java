@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface CountryService {
 
-    List<CountryDTO> getAllCountries();
+    List<CountryDTO> findAllCountries();
 }

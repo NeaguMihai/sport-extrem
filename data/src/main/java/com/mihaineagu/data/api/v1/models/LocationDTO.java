@@ -11,6 +11,6 @@ public class LocationDTO {
 
     private String locationName;
     private String uri;
-    private SportDTO sport;
+    private SportListDTO sport;
 
 }

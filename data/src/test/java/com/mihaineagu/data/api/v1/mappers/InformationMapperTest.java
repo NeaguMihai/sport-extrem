@@ -1,8 +1,6 @@
 package com.mihaineagu.data.api.v1.mappers;
 
 import com.mihaineagu.data.api.v1.models.InformationDTO;
-import com.mihaineagu.data.api.v1.models.LocationDTO;
-import com.mihaineagu.data.api.v1.models.SportDTO;
 import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.data.domain.Information;
 import org.junit.jupiter.api.Test;
@@ -56,36 +54,4 @@ class InformationMapperTest {
 
     }
 
-    @Test
-    void locationDTOToLocationSport() {
-
-        InformationDTO informationDTO = InformationDTO
-                .builder()
-                .price(PRICE)
-                .startingPeriod(START_PERIOD)
-                .endingPeriod(END_PERIOD)
-                .build();
-        SportDTO sportDTO = SportDTO
-                .builder()
-                .information(informationDTO)
-                .uri(URI)
-                .sportType(SPORT_TYPE)
-                .build();
-        LocationDTO locationDTO = LocationDTO
-                .builder()
-                .locationName(LOCATION_NAME)
-                .sport(sportDTO)
-                .uri(URI)
-                .build();
-
-        Information information = informationMapper.locationDTOToInformation(locationDTO);
-
-        assertEquals(informationDTO.getPrice(), information.getPrice());
-        assertEquals(informationDTO.getStartingPeriod(), information.getStartPeriod());
-        assertEquals(informationDTO.getEndingPeriod(), information.getEndPeriod());
-        assertEquals(sportDTO.getUri(), String.valueOf(information.getSportId()));
-        assertEquals(locationDTO.getUri(), String.valueOf(information.getLocationId()));
-        assertNull(information.getLocation());
-        assertNull(information.getSport());
-    }
 }
