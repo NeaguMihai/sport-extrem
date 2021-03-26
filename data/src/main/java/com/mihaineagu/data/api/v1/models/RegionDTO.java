@@ -11,6 +11,6 @@ public class RegionDTO {
 
     private String regionName;
     private String uri;
-    private LocationDTO location;
+    private LocationListDTO location;
 
 }

@@ -5,7 +5,6 @@ import com.mihaineagu.data.api.v1.models.InformationDTO;
 import com.mihaineagu.data.domain.Information;
 import com.mihaineagu.data.repository.InformationRepository;
 import com.mihaineagu.service.interfaces.InformationService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -13,7 +12,6 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

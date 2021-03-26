@@ -53,7 +53,8 @@ class WebSportServiceTest {
         sportMapper = SportMapper.INSTANCE;
         informationMapper = InformationMapper.INSTANCE;
 
-        sportService = new WebSportService(URI, SportMapper.INSTANCE, InformationMapper.INSTANCE, sportRepository, informationService);
+        sportService = new WebSportService(SportMapper.INSTANCE, InformationMapper.INSTANCE, sportRepository, informationService);
+        sportService.setUri(URI);
     }
 
     @Test

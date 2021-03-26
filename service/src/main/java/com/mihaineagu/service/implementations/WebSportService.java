@@ -16,18 +16,21 @@ import java.util.stream.Collectors;
 @Service("webSportService")
 public class WebSportService implements SportService {
 
-    private final String URI;
+    private String uri;
     private final SportMapper sportMapper;
     private final InformationMapper informationMapper;
     private final SportRepository sportRepository;
     private final InformationService informationService;
 
-    public WebSportService(String URI, SportMapper sportMapper, InformationMapper informationMapper, SportRepository sportRepository, InformationService informationService) {
-        this.URI = URI;
+    public WebSportService(SportMapper sportMapper, InformationMapper informationMapper, SportRepository sportRepository, InformationService informationService) {
         this.sportMapper = sportMapper;
         this.informationMapper = informationMapper;
         this.sportRepository = sportRepository;
         this.informationService = informationService;
+    }
+    @Override
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class WebSportService implements SportService {
                 .stream()
                 .map(sportMapper::sportToDTO)
                 .map(sportDTO -> {
-                    sportDTO.setUri(URI + sportDTO.getUri());
+                    sportDTO.setUri(uri + sportDTO.getUri());
                     return sportDTO;
                 })
                 .collect(Collectors.toList());
@@ -47,14 +50,14 @@ public class WebSportService implements SportService {
     public Optional<SportDTO> findBySportType(String sportType) {
         return sportRepository.findBySportType(sportType)
                 .map(sportMapper::sportToDTO)
-                .map(sportDTO -> {sportDTO.setUri(URI + sportDTO.getUri()); return sportDTO;});
+                .map(sportDTO -> {sportDTO.setUri(uri + sportDTO.getUri()); return sportDTO;});
     }
 
     @Override
     public Optional<SportDTO> findById(Long id) {
         return sportRepository.findById(id)
                 .map(sportMapper::sportToDTO)
-                .map(sportDTO -> {sportDTO.setUri(URI + sportDTO.getUri()); return sportDTO;});
+                .map(sportDTO -> {sportDTO.setUri(uri + sportDTO.getUri()); return sportDTO;});
     }
 
     @Override
@@ -73,7 +76,7 @@ public class WebSportService implements SportService {
                                 sportDTO
                                         .setInformation(informationMapper
                                                 .informationToDTO(information));
-                                sportDTO.setUri(URI + sport.getId());
+                                sportDTO.setUri(uri + sport.getId());
                                 sportDTOS.add(sportDTO);
                             });
                 });

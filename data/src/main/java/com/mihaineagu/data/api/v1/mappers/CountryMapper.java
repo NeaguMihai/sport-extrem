@@ -18,7 +18,7 @@ public interface CountryMapper extends GenericMapper{
     CountryDTO countryToDTO(Country country);
 
 
-    @Mapping(target = "regions", expression = "java(null)")
+    @Mapping(target = "regions", expression = "java(new java.util.HashSet<>())")
     @Mapping(target = "id", source = "uri", qualifiedByName = "uriToId")
     @Mapping(target = "countryName", source = "countryName")
     Country DTOTOCountry(CountryDTO countryDTO);

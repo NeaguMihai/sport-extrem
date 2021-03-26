@@ -6,9 +6,6 @@ spring:
   datasource:
     initialization-mode: never
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/proiect_PIBD
-    username: ${user_pibd}
-    password: ${parola_user}
-
-  messages:
-    basename: messageBundle/messages
+    url: jdbc:mysql://localhost:3308/atta_problem
+    username: atta_admin
+    password: mockpassword

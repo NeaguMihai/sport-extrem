@@ -9,4 +9,8 @@ public interface LocationService {
     List<LocationDTO> findAllWithoutSports();
 
     List<LocationDTO> findAllWithSports();
+
+    List<LocationDTO> findByRegionIdWithSports(Long regionId);
+
+    void SetUri(String locationUri, String sportUri);
 }

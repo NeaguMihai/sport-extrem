@@ -14,4 +14,6 @@ public interface SportService {
     Optional<SportDTO> findById(Long id);
 
     List<SportDTO> getSportAndInformationDTO(Long locationId);
+
+    void setUri(String uri);
 }

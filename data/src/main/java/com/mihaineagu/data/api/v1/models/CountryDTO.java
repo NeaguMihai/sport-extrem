@@ -11,5 +11,5 @@ public class CountryDTO {
 
     private String countryName;
     private String uri;
-    private RegionDTO regionDTO;
+    private RegionListDTO regionDTO;
 }

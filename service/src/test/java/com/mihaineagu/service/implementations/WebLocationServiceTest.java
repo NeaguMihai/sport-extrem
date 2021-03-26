@@ -42,7 +42,7 @@ class WebLocationServiceTest {
         locationRepository = mock(LocationRepository.class);
         sportService = mock(SportService.class);
 
-        locationService = new WebLocationService(URI, URI,locationMapper, locationRepository, sportService);
+        locationService = new WebLocationService(locationMapper, locationRepository, sportService);
 
     }
 

@@ -19,7 +19,7 @@ public interface RegionMapper extends GenericMapper{
 
 
     @Mapping(target = "id", source = "uri", qualifiedByName = "uriToId")
-    @Mapping(target = "locations", expression = "java(null)")
+    @Mapping(target = "locations", expression = "java(new java.util.HashSet<>())")
     @Mapping(target = "country", expression = "java(null)")
     @Mapping(target = "regionName", source = "regionName")
     Region DTOToRegion(RegionDTO regionDTO);

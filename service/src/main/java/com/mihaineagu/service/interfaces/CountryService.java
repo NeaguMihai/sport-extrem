@@ -6,5 +6,9 @@ import java.util.List;
 
 public interface CountryService {
 
-    List<CountryDTO> findAllCountries();
+    List<CountryDTO> findAllCountriesNoRegion();
+
+    List<CountryDTO> findAllCountriesWithRegion();
+
+    void setUri(String uri);
 }
