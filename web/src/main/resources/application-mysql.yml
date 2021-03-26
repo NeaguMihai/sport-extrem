@@ -9,3 +9,6 @@ spring:
     url: jdbc:mysql://localhost:3308/atta_problem
     username: atta_admin
     password: mockpassword
+server:
+  error:
+    include-message: always

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("webLocationService")
@@ -30,9 +31,10 @@ public class WebLocationService implements LocationService {
     }
 
     @Override
-    public void SetUri(String locationUri, String sportUri) {
+    public void setUri(String locationUri, String sportUri) {
         this.locationUri = locationUri;
         this.sportUri = sportUri;
+        this.sportService.setUri(sportUri);
     }
 
     @Override
@@ -54,16 +56,32 @@ public class WebLocationService implements LocationService {
             LocationDTO locationDTO = locationMapper.locationToDTO(location);
             locationDTO.setSport(
                     new SportListDTO(
-                            sportService.getSportAndInformationDTO(
-                                    location.getId())
-                                    .stream()
-                                    .map(sportDTO -> {
-                                     sportDTO.setUri(sportUri + sportDTO.getUri());
-                                     return sportDTO; })
-                                    .collect(Collectors.toList())));
+                            sportService.getSportAndInformationDTO(location.getId())));
+            locationDTO.setUri(locationUri + locationDTO.getUri());
             locationDTOList.add(locationDTO);
         });
         return locationDTOList;
+    }
+
+    @Override
+    public Optional<LocationDTO> findByIdWithSports(Long id) {
+        return locationRepository.findById(id)
+                .map(location -> {
+                   LocationDTO locationDTO = locationMapper.locationToDTO(location);
+                   locationDTO.setSport(new SportListDTO(sportService.getSportAndInformationDTO(location.getId())));
+                   locationDTO.setUri(locationUri + locationDTO.getUri());
+                   return locationDTO;
+                });
+    }
+
+    @Override
+    public Optional<LocationDTO> findByIdWithoutSports(Long id) {
+        return locationRepository.findById(id)
+                .map(locationMapper::locationToDTO)
+                .map(locationDTO -> {
+                    locationDTO.setUri(locationUri + locationDTO.getUri());
+                    return locationDTO;
+                });
     }
 
     @Override
@@ -74,12 +92,8 @@ public class WebLocationService implements LocationService {
             locationDTO.setSport(
                     new SportListDTO(
                             sportService.getSportAndInformationDTO(
-                                    location.getId())
-                                    .stream()
-                                    .map(sportDTO -> {
-                                        sportDTO.setUri(sportUri + sportDTO.getUri());
-                                        return sportDTO; })
-                                    .collect(Collectors.toList())));
+                                    location.getId())));
+            locationDTO.setUri(locationUri + locationDTO.getUri());
             locationDTOList.add(locationDTO);
         });
         return locationDTOList;

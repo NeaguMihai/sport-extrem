@@ -3,6 +3,7 @@ package com.mihaineagu.service.implementations;
 import com.mihaineagu.data.api.v1.mappers.InformationMapper;
 import com.mihaineagu.data.api.v1.mappers.SportMapper;
 import com.mihaineagu.data.api.v1.models.SportDTO;
+import com.mihaineagu.data.domain.Sport;
 import com.mihaineagu.data.repository.SportRepository;
 import com.mihaineagu.service.interfaces.InformationService;
 import com.mihaineagu.service.interfaces.SportService;
@@ -81,6 +82,16 @@ public class WebSportService implements SportService {
                             });
                 });
         return sportDTOS;
+    }
+
+    @Override
+    public Optional<SportDTO> addNewSport(SportDTO sportDTO) {
+        Sport sport = sportMapper.DTOToSport(sportDTO);
+        if(findBySportType(sport.getSportType()).isEmpty())
+            return Optional.of(sportMapper.sportToDTO(sportRepository.save(sport)));
+        else {
+            return Optional.empty();
+        }
     }
 
 

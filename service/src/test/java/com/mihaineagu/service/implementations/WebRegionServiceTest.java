@@ -59,8 +59,8 @@ class WebRegionServiceTest {
         List<RegionDTO> regionDTOList = regionService.getAllRegionsWithoutLocations();
 
         assertEquals(regionList.size(), regionDTOList.size());
-        assertEquals(regionMapper.regionToDTO(region), regionDTOList.get(0));
-        assertEquals(regionMapper.regionToDTO(region1), regionDTOList.get(1));
+        assertEquals(MOCK + region.getId(), regionDTOList.get(0).getUri());
+        assertEquals(MOCK + region1.getId(), regionDTOList.get(1).getUri());
     }
 
     @Test
