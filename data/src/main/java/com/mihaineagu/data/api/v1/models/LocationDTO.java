@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -13,6 +15,6 @@ public class LocationDTO {
 
     private String locationName;
     private String uri;
-    private SportListDTO sport;
+    private List<SportDTO> sports;
 
 }

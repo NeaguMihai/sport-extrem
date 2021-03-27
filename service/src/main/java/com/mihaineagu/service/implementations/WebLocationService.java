@@ -1,8 +1,10 @@
 package com.mihaineagu.service.implementations;
 
 import com.mihaineagu.data.api.v1.mappers.LocationMapper;
+import com.mihaineagu.data.api.v1.mappers.RegionMapper;
 import com.mihaineagu.data.api.v1.models.LocationDTO;
-import com.mihaineagu.data.api.v1.models.SportListDTO;
+import com.mihaineagu.data.api.v1.models.RegionDTO;
+import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.data.repository.LocationRepository;
 import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.SportService;
@@ -20,9 +22,11 @@ public class WebLocationService implements LocationService {
     private String sportUri;
     private final LocationMapper locationMapper;
     private final LocationRepository locationRepository;
+    private final RegionMapper regionMapper;
     private final SportService sportService;
 
-    public WebLocationService(LocationMapper locationMapper, LocationRepository locationRepository, SportService sportService) {
+    public WebLocationService(LocationMapper locationMapper, LocationRepository locationRepository, RegionMapper regionMapper, SportService sportService) {
+        this.regionMapper = regionMapper;
         locationUri = "";
         sportUri = "";
         this.locationMapper = locationMapper;
@@ -55,7 +59,7 @@ public class WebLocationService implements LocationService {
         return locationRepository.findById(id)
                 .map(location -> {
                    LocationDTO locationDTO = locationMapper.locationToDTO(location);
-                   locationDTO.setSport(new SportListDTO(sportService.getSportAndInformationDTO(location.getId())));
+                   locationDTO.setSports(sportService.getSportAndInformationDTO(location.getId()));
                    locationDTO.setUri(locationUri + locationDTO.getUri());
                    return locationDTO;
                 });
@@ -69,6 +73,13 @@ public class WebLocationService implements LocationService {
                     locationDTO.setUri(locationUri + locationDTO.getUri());
                     return locationDTO;
                 });
+    }
+
+    @Override
+    public Boolean findIfExistent(LocationDTO locationDTO, Long id) {
+        Optional<Location> location = locationRepository.findLocationByRegionIdAndLocationName(id, locationDTO.getLocationName());
+
+        return location.isPresent();
     }
 
     @Override
@@ -88,10 +99,20 @@ public class WebLocationService implements LocationService {
         List<LocationDTO> locationDTOList = new LinkedList<>();
         locationRepository.findByRegionId(regionId).forEach(location -> {
             LocationDTO locationDTO = locationMapper.locationToDTO(location);
-            locationDTO.setSport(new SportListDTO(sportService.getSportAndInformationDTO(location.getId())));
+            locationDTO.setSports(sportService.getSportAndInformationDTO(location.getId()));
             locationDTO.setUri(locationUri + locationDTO.getUri());
             locationDTOList.add(locationDTO);
         });
         return locationDTOList;
+    }
+
+    @Override
+    public Optional<LocationDTO> saveLocation(LocationDTO locationDTO, RegionDTO regionDTO) {
+        Location toBeSaved = locationMapper.DTOTOLocation(locationDTO);
+        toBeSaved.setRegion(regionMapper.DTOToRegion(regionDTO));
+        Optional<Location> saved = Optional.of(locationRepository.save(toBeSaved));
+
+        return saved.map(locationMapper::locationToDTO);
+
     }
 }

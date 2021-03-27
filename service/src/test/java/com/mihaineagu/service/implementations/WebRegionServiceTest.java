@@ -1,6 +1,8 @@
 package com.mihaineagu.service.implementations;
 
+import com.mihaineagu.data.api.v1.mappers.CountryMapper;
 import com.mihaineagu.data.api.v1.mappers.RegionMapper;
+import com.mihaineagu.data.api.v1.models.CountryDTO;
 import com.mihaineagu.data.api.v1.models.LocationDTO;
 import com.mihaineagu.data.api.v1.models.RegionDTO;
 import com.mihaineagu.data.domain.Region;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,21 +28,23 @@ class WebRegionServiceTest {
     public static final String REG_NAME1 = "RegName";
     public static final long ID1 = 1L;
     public static final long ID = 2L;
+    public static final String URI = "/mock/1";
     @Mock
     RegionRepository regionRepository;
     @Mock
     LocationService locationService;
     RegionMapper regionMapper;
-
+    CountryMapper countryMapper;
     RegionService regionService;
 
     @BeforeEach
     void setUp() {
         regionMapper = RegionMapper.INSTANCE;
+        countryMapper = CountryMapper.INSTANCE;
         locationService = mock(LocationService.class);
         regionRepository = mock(RegionRepository.class);
 
-        regionService = new WebRegionService(regionRepository, regionMapper, locationService);
+        regionService = new WebRegionService(regionRepository, regionMapper, countryMapper, locationService);
         regionService.setUri(MOCK);
     }
 
@@ -97,7 +101,7 @@ class WebRegionServiceTest {
 
         assertTrue(regionDTO.isPresent());
         assertEquals(region, regionMapper.DTOToRegion(regionDTO.get()));
-        assertEquals(2, regionDTO.get().getLocation().getLocationListDTO().size());
+        assertEquals(2, regionDTO.get().getLocations().size());
     }
 
     @Test
@@ -111,7 +115,7 @@ class WebRegionServiceTest {
 
         assertTrue(regionDTO.isPresent());
         assertEquals(region, regionMapper.DTOToRegion(regionDTO.get()));
-        assertNull(regionDTO.get().getLocation());
+        assertNull(regionDTO.get().getLocations());
     }
 
     @Test
@@ -121,5 +125,29 @@ class WebRegionServiceTest {
         Optional<RegionDTO> regionDTO = regionService.findByIdWithoutLocation(anyLong());
 
         assertTrue(regionDTO.isEmpty());
+    }
+
+    @Test
+    void addRegionSuccessTest() {
+
+        RegionDTO toBeSaved = RegionDTO
+                .builder()
+                .regionName(REG_NAME1)
+                .build();
+
+        CountryDTO country  = new CountryDTO();
+        country.setUri(URI);
+
+        when(regionRepository.findRegionByCountryIdAndRegionName(anyLong(), anyString())).thenReturn(Optional.empty());
+        when(regionRepository.save(any())).thenReturn(regionMapper.DTOToRegion(toBeSaved));
+
+        Boolean exists = regionService.findIfExists(toBeSaved, ID);
+
+        assertFalse(exists);
+
+        Optional<RegionDTO> returned = regionService.saveRegion(toBeSaved, country);
+
+        assertTrue(returned.isPresent());
+        assertEquals(toBeSaved.toString(), returned.get().toString());
     }
 }

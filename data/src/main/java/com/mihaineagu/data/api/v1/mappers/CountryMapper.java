@@ -13,7 +13,7 @@ public interface CountryMapper extends GenericMapper{
 
 
     @Mapping(target = "uri", source = "id", qualifiedByName = "idToUri")
-    @Mapping(target = "regionDTO", expression = "java(null)")
+    @Mapping(target = "regions", expression = "java(null)")
     @Mapping(target = "countryName", source = "countryName")
     CountryDTO countryToDTO(Country country);
 

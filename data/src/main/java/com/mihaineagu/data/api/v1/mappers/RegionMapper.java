@@ -13,7 +13,7 @@ public interface RegionMapper extends GenericMapper{
     RegionMapper INSTANCE = Mappers.getMapper(RegionMapper.class);
 
     @Mapping(target = "uri", source = "id",qualifiedByName = "idToUri")
-    @Mapping(target = "location", expression = "java(null)")
+    @Mapping(target = "locations", expression = "java(null)")
     @Mapping(target = "regionName", source = "regionName")
     RegionDTO regionToDTO(Region region);
 

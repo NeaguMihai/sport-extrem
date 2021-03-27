@@ -1,8 +1,8 @@
 package com.mihaineagu.service.implementations;
 
 import com.mihaineagu.data.api.v1.mappers.LocationMapper;
+import com.mihaineagu.data.api.v1.mappers.RegionMapper;
 import com.mihaineagu.data.api.v1.models.LocationDTO;
-import com.mihaineagu.data.api.v1.models.SportDTO;
 import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.data.repository.LocationRepository;
 import com.mihaineagu.service.interfaces.LocationService;
@@ -11,11 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +28,7 @@ class WebLocationServiceTest {
     public static final String SPORT_2 = "Sport2";
     LocationService locationService;
     LocationMapper locationMapper;
+    RegionMapper regionMapper;
     @Mock
     LocationRepository locationRepository;
     @Mock
@@ -42,7 +41,7 @@ class WebLocationServiceTest {
         locationRepository = mock(LocationRepository.class);
         sportService = mock(SportService.class);
 
-        locationService = new WebLocationService(locationMapper, locationRepository, sportService);
+        locationService = new WebLocationService(locationMapper, locationRepository, regionMapper, sportService);
 
     }
 

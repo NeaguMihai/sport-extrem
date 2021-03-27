@@ -15,5 +15,7 @@ public interface CountryService {
 
     Optional<CountryDTO> findCountryByIdWithoutRegion(Long id);
 
+    Optional<CountryDTO> addNewCountry(CountryDTO countryDTO);
+
     void setUri(String uri);
 }

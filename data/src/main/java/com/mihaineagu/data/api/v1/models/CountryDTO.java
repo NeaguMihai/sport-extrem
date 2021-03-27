@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -13,5 +15,5 @@ public class CountryDTO {
 
     private String countryName;
     private String uri;
-    private RegionListDTO regionDTO;
+    private List<RegionDTO> regions;
 }

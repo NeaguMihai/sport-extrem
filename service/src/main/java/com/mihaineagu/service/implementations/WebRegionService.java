@@ -1,10 +1,9 @@
 package com.mihaineagu.service.implementations;
 
+import com.mihaineagu.data.api.v1.mappers.CountryMapper;
 import com.mihaineagu.data.api.v1.mappers.RegionMapper;
-import com.mihaineagu.data.api.v1.models.LocationDTO;
-import com.mihaineagu.data.api.v1.models.LocationListDTO;
-import com.mihaineagu.data.api.v1.models.RegionDTO;
-import com.mihaineagu.data.api.v1.models.SportListDTO;
+import com.mihaineagu.data.api.v1.models.*;
+import com.mihaineagu.data.domain.Region;
 import com.mihaineagu.data.repository.RegionRepository;
 import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.RegionService;
@@ -21,10 +20,12 @@ public class WebRegionService implements RegionService {
     private String uri;
     private final RegionRepository regionRepository;
     private final RegionMapper regionMapper;
+    private final CountryMapper countryMapper;
     private final LocationService locationService;
 
-    public WebRegionService(RegionRepository regionRepository, RegionMapper regionMapper, LocationService locationService) {
+    public WebRegionService(RegionRepository regionRepository, RegionMapper regionMapper, CountryMapper countryMapper, LocationService locationService) {
         uri = "";
+        this.countryMapper = countryMapper;
         this.regionRepository = regionRepository;
         this.regionMapper = regionMapper;
         this.locationService = locationService;
@@ -65,10 +66,8 @@ public class WebRegionService implements RegionService {
         List<RegionDTO> regionDTOList = new LinkedList<>();
         regionRepository.findByCountryId(id)
                 .forEach(region -> {
-                    LocationListDTO locationListDTO;
-                    locationListDTO = new LocationListDTO(locationService.findByRegionIdWithoutSports(region.getId()));
                     RegionDTO regionDTO = regionMapper.regionToDTO(region);
-                    regionDTO.setLocation(locationListDTO);
+                    regionDTO.setLocations(locationService.findByRegionIdWithoutSports(region.getId()));
                     regionDTO.setUri(uri + regionDTO.getUri());
                     regionDTOList.add(regionDTO);
                 });
@@ -80,7 +79,7 @@ public class WebRegionService implements RegionService {
         return regionRepository.findById(id)
                 .map(region -> {
                     RegionDTO regionDTO = regionMapper.regionToDTO(region);
-                    regionDTO.setLocation(new LocationListDTO(locationService.findByRegionIdWithoutSports(region.getId())));
+                    regionDTO.setLocations(locationService.findByRegionIdWithoutSports(region.getId()));
                     regionDTO.setUri(uri + regionDTO.getUri());
                     return regionDTO;
                 });
@@ -94,6 +93,23 @@ public class WebRegionService implements RegionService {
                     regionDTO.setUri(uri + regionDTO.getUri());
                     return regionDTO;
                 });
+    }
+
+    @Override
+    public Boolean findIfExists(RegionDTO regionDTO, Long id) {
+
+        Optional<Region> returned = regionRepository.findRegionByCountryIdAndRegionName(id, regionDTO.getRegionName());
+
+        return returned.isPresent();
+    }
+
+    @Override
+    public Optional<RegionDTO> saveRegion(RegionDTO region, CountryDTO country) {
+        Region toBeSaved = regionMapper.DTOToRegion(region);
+        toBeSaved.setCountry(countryMapper.DTOTOCountry(country));
+        Optional<Region> returned = Optional.of(regionRepository.save(toBeSaved));
+
+        return returned.map(regionMapper::regionToDTO);
     }
 
 

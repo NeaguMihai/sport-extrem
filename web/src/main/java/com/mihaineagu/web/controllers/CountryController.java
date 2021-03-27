@@ -3,6 +3,7 @@ package com.mihaineagu.web.controllers;
 import com.mihaineagu.data.api.v1.models.CountryDTO;
 import com.mihaineagu.data.api.v1.models.CountryListDTO;
 import com.mihaineagu.service.interfaces.CountryService;
+import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class CountryController {
     }
 
     @GetMapping(path = "/countries/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public CountryDTO getCountryById(
             @RequestParam(name = "region", defaultValue = "false") Boolean region,
             @PathVariable(name = "id") Long id) {
@@ -47,5 +49,18 @@ public class CountryController {
             return countryDTO.get();
         else
             throw new RessourceNotFoundException();
+    }
+
+    @PostMapping(path = "/countries")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CountryDTO addNewCountry(@RequestBody CountryDTO countryDTO) {
+        countryDTO.setUri(null);
+
+        Optional<CountryDTO> returned = countryService.addNewCountry(countryDTO);
+
+        if (returned.isPresent())
+            return returned.get();
+        else
+            throw new DuplicateEntityExceptions();
     }
 }

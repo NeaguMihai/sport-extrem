@@ -3,6 +3,7 @@ package com.mihaineagu.service.implementations;
 import com.mihaineagu.data.api.v1.mappers.CountryMapper;
 import com.mihaineagu.data.api.v1.models.CountryDTO;
 import com.mihaineagu.data.api.v1.models.RegionListDTO;
+import com.mihaineagu.data.domain.Country;
 import com.mihaineagu.data.repository.CountryRepository;
 import com.mihaineagu.service.interfaces.CountryService;
 import com.mihaineagu.service.interfaces.RegionService;
@@ -52,11 +53,9 @@ public class WebCountryService implements CountryService {
         countryRepository.findAll().forEach(country -> {
             CountryDTO countryDTO = countryMapper.countryToDTO(country);
             countryDTO.setUri(uri + countryDTO.getUri());
-            countryDTO.setRegionDTO(
-                    new RegionListDTO(
+            countryDTO.setRegions(
                             regionService
                                     .findByCountryIdWithoutLocation(country.getId())
-                    )
             );
             countryDTOSList.add(countryDTO);
 
@@ -69,7 +68,7 @@ public class WebCountryService implements CountryService {
         return countryRepository.findById(id)
                 .map(country -> {
                     CountryDTO countryDTO = countryMapper.countryToDTO(country);
-                    countryDTO.setRegionDTO(new RegionListDTO(regionService.findByCountryIdWithoutLocation(id)));
+                    countryDTO.setRegions(regionService.findByCountryIdWithoutLocation(id));
                     countryDTO.setUri(uri + countryDTO.getUri());
                     return countryDTO;
                 });
@@ -83,6 +82,17 @@ public class WebCountryService implements CountryService {
                     countryDTO.setUri(uri + countryDTO.getUri());
                     return countryDTO;
                 });
+    }
+
+    @Override
+    public Optional<CountryDTO> addNewCountry(CountryDTO countryDTO) {
+        Optional<Country> existing = countryRepository.findCountryByCountryName(countryDTO.getCountryName());
+
+        if(existing.isEmpty()) {
+            Country saved = countryRepository.save(countryMapper.DTOTOCountry(countryDTO));
+            return Optional.of(countryMapper.countryToDTO(saved));
+        }else
+            return Optional.empty();
     }
 
 

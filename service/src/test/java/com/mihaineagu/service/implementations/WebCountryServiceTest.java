@@ -88,14 +88,14 @@ class WebCountryServiceTest {
 
         when(countryRepository.findAll()).thenReturn(List.of(country1, country2));
 
-        when(regionService.findByCountryIdWIthLocation(ID1)).thenReturn(List.of(regionDTO1, regionDTO2));
-        when(regionService.findByCountryIdWIthLocation(ID2)).thenReturn(Collections.singletonList(regionDTO1));
+        when(regionService.findByCountryIdWithoutLocation(ID1)).thenReturn(List.of(regionDTO1, regionDTO2));
+        when(regionService.findByCountryIdWithoutLocation(ID2)).thenReturn(Collections.singletonList(regionDTO1));
 
         List<CountryDTO> countryDTOList = countryService.findAllCountriesWithRegion();
 
         assertEquals(2, countryDTOList.size());
-        assertEquals(2, countryDTOList.get(0).getRegionDTO().getRegionDTOList().size());
-        assertEquals(1, countryDTOList.get(1).getRegionDTO().getRegionDTOList().size());
+        assertEquals(2, countryDTOList.get(0).getRegions().size());
+        assertEquals(1, countryDTOList.get(1).getRegions().size());
 
 
     }

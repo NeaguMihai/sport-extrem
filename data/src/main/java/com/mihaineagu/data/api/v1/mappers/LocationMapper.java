@@ -12,7 +12,7 @@ public interface LocationMapper extends GenericMapper{
     LocationMapper INSTANCE = Mappers.getMapper(LocationMapper.class);
 
     @Mapping(target = "uri", source = "id", qualifiedByName = "idToUri")
-    @Mapping(target = "sport", expression = "java(null)")
+    @Mapping(target = "sports", expression = "java(null)")
     @Mapping(target = "locationName", source = "locationName")
     LocationDTO locationToDTO(Location location);
 

@@ -7,6 +7,7 @@ import com.mihaineagu.data.api.v1.models.RegionListDTO;
 import com.mihaineagu.service.interfaces.CountryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,8 +23,10 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureDataJpa
 class CountryControllerTest extends AbstractControllerTest{
 
+    public static final String COUNTRY_1 = "Country1";
     @Autowired
     MockMvc mockMvc;
 
@@ -44,12 +48,12 @@ class CountryControllerTest extends AbstractControllerTest{
                 CountryDTO
                         .builder()
                         .uri(URI)
-                        .regionDTO(new RegionListDTO(List.of(new RegionDTO(), new RegionDTO())))
+                        .regions(List.of(new RegionDTO(), new RegionDTO()))
                         .build(),
                 CountryDTO
                         .builder()
                         .uri(URI)
-                        .regionDTO(new RegionListDTO(List.of(new RegionDTO(), new RegionDTO())))
+                        .regions(List.of(new RegionDTO(), new RegionDTO()))
                         .build());
 
         when(countryService.findAllCountriesWithRegion()).thenReturn(countryDTOList);
@@ -59,7 +63,7 @@ class CountryControllerTest extends AbstractControllerTest{
                 .param("region","true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.countryDTOList", hasSize(2)))
-                .andExpect(jsonPath("$.countryDTOList[0].regionDTO.regionDTOList", hasSize(2)));
+                .andExpect(jsonPath("$.countryDTOList[0].regions", hasSize(2)));
     }
     @Test
     void getAllCountriesWithoutRegionsTest() throws Exception {
@@ -80,7 +84,7 @@ class CountryControllerTest extends AbstractControllerTest{
                 .param("region", "false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.countryDTOList", hasSize(2)))
-                .andExpect(jsonPath("$.countryDTOList[0].regionDTO", nullValue()));
+                .andExpect(jsonPath("$.countryDTOList[0].regions", nullValue()));
     }
 
     @Test
@@ -90,7 +94,7 @@ class CountryControllerTest extends AbstractControllerTest{
                 CountryDTO
                         .builder()
                         .uri(URI)
-                        .regionDTO(new RegionListDTO(Collections.singletonList(RegionDTO.builder().build())))
+                        .regions(Collections.singletonList(RegionDTO.builder().build()))
                         .build());
         when(countryService.findCountryByIdWithRegion(anyLong())).thenReturn(countryDTO);
 
@@ -99,7 +103,7 @@ class CountryControllerTest extends AbstractControllerTest{
                 .param("region","true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uri", equalTo(URI)))
-                .andExpect(jsonPath("$.regionDTO.regionDTOList", hasSize(1)));
+                .andExpect(jsonPath("$.regions", hasSize(1)));
     }
     @Test
     void getCountryByIdWithoutRegionFoundTest() throws Exception {
@@ -116,6 +120,39 @@ class CountryControllerTest extends AbstractControllerTest{
                 .param("region","false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uri", equalTo(URI)))
-                .andExpect(jsonPath("$.regionDTO", nullValue()));
+                .andExpect(jsonPath("$.regions", nullValue()));
+    }
+
+    @Test
+    void postNewCountryNonExistingTest() throws Exception {
+        CountryDTO toBeSaved = CountryDTO
+                        .builder()
+                        .uri(URI)
+                        .countryName(COUNTRY_1)
+                        .build();
+
+        when(countryService.addNewCountry(ArgumentMatchers.any())).thenReturn(Optional.of(toBeSaved));
+
+        mockMvc.perform(post("/api/v1/countries")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(toBeSaved)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.countryName", equalTo(COUNTRY_1)));
+    }
+    @Test
+    void postNewCountryExistingTest() throws Exception {
+        CountryDTO toBeSaved = CountryDTO
+                        .builder()
+                        .uri(URI)
+                        .countryName(COUNTRY_1)
+                        .build();
+
+        when(countryService.addNewCountry(ArgumentMatchers.any())).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/v1/countries")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(toBeSaved)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.errorMessage", equalTo(EXISTS_ERROR)));
     }
 }

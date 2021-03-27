@@ -1,6 +1,8 @@
 package com.mihaineagu.service.implementations;
 
 import com.mihaineagu.data.api.v1.mappers.InformationMapper;
+import com.mihaineagu.data.api.v1.mappers.LocationMapper;
+import com.mihaineagu.data.api.v1.mappers.SportMapper;
 import com.mihaineagu.data.api.v1.models.InformationDTO;
 import com.mihaineagu.data.domain.Information;
 import com.mihaineagu.data.repository.InformationRepository;
@@ -24,13 +26,18 @@ class WebInformationServiceTest {
     public static final int PRICE = 100;
     InformationService informationService;
 
+    LocationMapper locationMapper;
+    SportMapper sportMapper;
+
     @Mock
     InformationRepository informationRepository;
 
     @BeforeEach
     void setUp() {
         informationRepository = mock(InformationRepository.class);
-        informationService = new WebInformationService(informationRepository, InformationMapper.INSTANCE);
+        locationMapper = LocationMapper.INSTANCE;
+        sportMapper = SportMapper.INSTANCE;
+        informationService = new WebInformationService(informationRepository, InformationMapper.INSTANCE, sportMapper, locationMapper);
     }
 
     @Test
