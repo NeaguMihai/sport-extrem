@@ -68,34 +68,4 @@ class WebLocationServiceTest {
         assertEquals(locationMapper.locationToDTO(location2),locationDTOList.get(1));
     }
 
-    @Test
-    void findAllWithSports() {
-        SportDTO sportDTO1 = SportDTO
-                .builder()
-                .sportType(SPORT_1)
-                .build();
-        SportDTO sportDTO2 = SportDTO
-                .builder()
-                .sportType(SPORT_2)
-                .build();
-        Location location1 = new Location();
-        location1.setId(ID);
-        Location location2 = new Location();
-        location2.setId(ID1);
-
-        List<SportDTO> sportDTOList = List.of(sportDTO1, sportDTO2);
-        List<Location> locationList = List.of(location1, location2);
-
-        when(locationRepository.findAll()).thenReturn(locationList);
-        when(sportService.getSportAndInformationDTO(ID)).thenReturn(sportDTOList);
-        when(sportService.getSportAndInformationDTO(ID1)).thenReturn(Collections.singletonList(sportDTO1));
-
-        List<LocationDTO> locationDTOList = locationService.findAllWithSports();
-
-        assertEquals(locationList.size(), locationDTOList.size());
-        assertEquals(sportDTOList.size(), locationDTOList.get(0).getSport().getSportList().size());
-        assertEquals(1, locationDTOList.get(1).getSport().getSportList().size());
-        assertEquals(sportDTO1, locationDTOList.get(0).getSport().getSportList().get(0));
-        assertEquals(sportDTO2, locationDTOList.get(0).getSport().getSportList().get(1));
-    }
 }

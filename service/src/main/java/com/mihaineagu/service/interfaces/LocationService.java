@@ -9,11 +9,11 @@ public interface LocationService {
 
     List<LocationDTO> findAllWithoutSports();
 
-    List<LocationDTO> findAllWithSports();
-
     Optional<LocationDTO> findByIdWithSports(Long id);
 
     Optional<LocationDTO> findByIdWithoutSports(Long id);
+
+    List<LocationDTO> findByRegionIdWithoutSports(Long regionId);
 
     List<LocationDTO> findByRegionIdWithSports(Long regionId);
 

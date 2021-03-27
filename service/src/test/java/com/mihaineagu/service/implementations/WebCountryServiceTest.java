@@ -88,8 +88,8 @@ class WebCountryServiceTest {
 
         when(countryRepository.findAll()).thenReturn(List.of(country1, country2));
 
-        when(regionService.getByCountryIdWIthLocation(ID1)).thenReturn(List.of(regionDTO1, regionDTO2));
-        when(regionService.getByCountryIdWIthLocation(ID2)).thenReturn(Collections.singletonList(regionDTO1));
+        when(regionService.findByCountryIdWIthLocation(ID1)).thenReturn(List.of(regionDTO1, regionDTO2));
+        when(regionService.findByCountryIdWIthLocation(ID2)).thenReturn(Collections.singletonList(regionDTO1));
 
         List<CountryDTO> countryDTOList = countryService.findAllCountriesWithRegion();
 

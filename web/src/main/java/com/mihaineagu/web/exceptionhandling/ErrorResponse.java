@@ -1,4 +1,4 @@
-package com.mihaineagu.web.exceptions;
+package com.mihaineagu.web.exceptionhandling;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

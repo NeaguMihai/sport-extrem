@@ -1,7 +1,5 @@
 package com.mihaineagu.web.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.mihaineagu.data.api.v1.models.SportDTO;
 import com.mihaineagu.service.interfaces.SportService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(SportController.class)
 @AutoConfigureDataJpa
-public class SportControllerWebMvcTest {
+public class SportControllerWebMvcTest extends AbstractControllerTest{
 
     public static final String URI1  = "/mock/1";
     public static final String SPORT_1 = "sport1";
@@ -46,12 +43,8 @@ public class SportControllerWebMvcTest {
 
     SportDTO returnedSport;
 
-    ObjectWriter objectWriter;
-
     @BeforeEach
     void setUp(){
-
-        objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
         returnedSport = SportDTO
                 .builder()

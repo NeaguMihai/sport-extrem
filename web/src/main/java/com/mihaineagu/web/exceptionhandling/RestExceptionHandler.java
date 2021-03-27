@@ -1,13 +1,11 @@
 package com.mihaineagu.web.exceptionhandling;
 
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
-import com.mihaineagu.web.exceptions.ErrorResponse;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.server.handler.ResponseStatusExceptionHandler;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +19,7 @@ public class RestExceptionHandler  {
         response.setErrorMessage("This entity already exists!");
         response.setErrorCode("CONFLICT");
         response.setTimestamp(LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(400));
     }
 
     @ExceptionHandler(RessourceNotFoundException.class)

@@ -12,8 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +58,7 @@ class WebRegionServiceTest {
 
         when(regionRepository.findAll()).thenReturn(regionList);
 
-        List<RegionDTO> regionDTOList = regionService.getAllRegionsWithoutLocations();
+        List<RegionDTO> regionDTOList = regionService.findAllRegionsWithoutLocations();
 
         assertEquals(regionList.size(), regionDTOList.size());
         assertEquals(MOCK + region.getId(), regionDTOList.get(0).getUri());
@@ -64,7 +66,7 @@ class WebRegionServiceTest {
     }
 
     @Test
-    void getAllRegionsWithLocation() {
+    void getAllByCountryIdWithLocation() {
         Region region = new Region();
         region.setRegionName(REG_NAME1);
         region.setId(ID1);
@@ -73,18 +75,51 @@ class WebRegionServiceTest {
         region1.setRegionName(REG_NAME1);
         region1.setId(ID);
 
-        LocationDTO locationDTO1 = LocationDTO.builder().build();
-        LocationDTO locationDTO2 = LocationDTO.builder().build();
+        when(regionRepository.findByCountryId(anyLong())).thenReturn(List.of(region, region1));
 
-        when(regionRepository.findAll()).thenReturn(List.of(region, region1));
 
-        when(locationService.findByRegionIdWithSports(ID1)).thenReturn(List.of(locationDTO1, locationDTO2));
-        when(locationService.findByRegionIdWithSports(ID)).thenReturn(List.of(locationDTO1));
-
-        List<RegionDTO> regionDTOList = regionService.getAllRegionsWithLocation();
+        List<RegionDTO> regionDTOList = regionService.findByCountryIdWithoutLocation(anyLong());
 
         assertEquals(2, regionDTOList.size());
-        assertEquals(2, regionDTOList.get(0).getLocation().getLocationListDTO().size());
-        assertEquals(1, regionDTOList.get(1).getLocation().getLocationListDTO().size());
+
+    }
+
+    @Test
+    void findByIdWithLocationTest() {
+        Region region = new Region();
+        region.setId(ID);
+
+        when(regionRepository.findById(anyLong())).thenReturn(Optional.of(region));
+
+        when(locationService.findByRegionIdWithoutSports(anyLong())).thenReturn(List.of(new LocationDTO(), new LocationDTO()));
+
+        Optional<RegionDTO> regionDTO = regionService.findByIdWithLocation(anyLong());
+
+        assertTrue(regionDTO.isPresent());
+        assertEquals(region, regionMapper.DTOToRegion(regionDTO.get()));
+        assertEquals(2, regionDTO.get().getLocation().getLocationListDTO().size());
+    }
+
+    @Test
+    void findByIdWithoutLocationTest() {
+        Region region = new Region();
+        region.setId(ID);
+
+        when(regionRepository.findById(anyLong())).thenReturn(Optional.of(region));
+
+        Optional<RegionDTO> regionDTO = regionService.findByIdWithoutLocation(anyLong());
+
+        assertTrue(regionDTO.isPresent());
+        assertEquals(region, regionMapper.DTOToRegion(regionDTO.get()));
+        assertNull(regionDTO.get().getLocation());
+    }
+
+    @Test
+    void findByIdEmptyOptionalTest() {
+        when(regionRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Optional<RegionDTO> regionDTO = regionService.findByIdWithoutLocation(anyLong());
+
+        assertTrue(regionDTO.isEmpty());
     }
 }

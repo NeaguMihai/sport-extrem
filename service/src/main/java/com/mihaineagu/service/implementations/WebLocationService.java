@@ -49,19 +49,6 @@ public class WebLocationService implements LocationService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<LocationDTO> findAllWithSports() {
-        List<LocationDTO> locationDTOList = new LinkedList<>();
-        locationRepository.findAll().forEach(location -> {
-            LocationDTO locationDTO = locationMapper.locationToDTO(location);
-            locationDTO.setSport(
-                    new SportListDTO(
-                            sportService.getSportAndInformationDTO(location.getId())));
-            locationDTO.setUri(locationUri + locationDTO.getUri());
-            locationDTOList.add(locationDTO);
-        });
-        return locationDTOList;
-    }
 
     @Override
     public Optional<LocationDTO> findByIdWithSports(Long id) {
@@ -85,14 +72,23 @@ public class WebLocationService implements LocationService {
     }
 
     @Override
+    public List<LocationDTO> findByRegionIdWithoutSports(Long regionId) {
+        List<LocationDTO> locationDTOList = new LinkedList<>();
+        locationRepository.findByRegionId(regionId).forEach(location -> {
+            LocationDTO locationDTO = locationMapper.locationToDTO(location);
+
+            locationDTO.setUri(locationUri + locationDTO.getUri());
+            locationDTOList.add(locationDTO);
+        });
+        return locationDTOList;
+    }
+
+    @Override
     public List<LocationDTO> findByRegionIdWithSports(Long regionId) {
         List<LocationDTO> locationDTOList = new LinkedList<>();
         locationRepository.findByRegionId(regionId).forEach(location -> {
             LocationDTO locationDTO = locationMapper.locationToDTO(location);
-            locationDTO.setSport(
-                    new SportListDTO(
-                            sportService.getSportAndInformationDTO(
-                                    location.getId())));
+            locationDTO.setSport(new SportListDTO(sportService.getSportAndInformationDTO(location.getId())));
             locationDTO.setUri(locationUri + locationDTO.getUri());
             locationDTOList.add(locationDTO);
         });

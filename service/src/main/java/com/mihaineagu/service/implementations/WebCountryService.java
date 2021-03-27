@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,13 +55,34 @@ public class WebCountryService implements CountryService {
             countryDTO.setRegionDTO(
                     new RegionListDTO(
                             regionService
-                                    .getByCountryIdWIthLocation(country.getId())
+                                    .findByCountryIdWithoutLocation(country.getId())
                     )
             );
             countryDTOSList.add(countryDTO);
 
         });
         return countryDTOSList;
+    }
+
+    @Override
+    public Optional<CountryDTO> findCountryByIdWithRegion(Long id) {
+        return countryRepository.findById(id)
+                .map(country -> {
+                    CountryDTO countryDTO = countryMapper.countryToDTO(country);
+                    countryDTO.setRegionDTO(new RegionListDTO(regionService.findByCountryIdWithoutLocation(id)));
+                    countryDTO.setUri(uri + countryDTO.getUri());
+                    return countryDTO;
+                });
+    }
+
+    @Override
+    public Optional<CountryDTO> findCountryByIdWithoutRegion(Long id) {
+        return countryRepository.findById(id)
+                .map(country -> {
+                    CountryDTO countryDTO = countryMapper.countryToDTO(country);
+                    countryDTO.setUri(uri + countryDTO.getUri());
+                    return countryDTO;
+                });
     }
 
 
