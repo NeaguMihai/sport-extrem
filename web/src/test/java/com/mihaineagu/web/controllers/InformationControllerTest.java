@@ -111,5 +111,6 @@ class InformationControllerTest extends AbstractControllerTest{
                 .andExpect(jsonPath("$.sports[0].information", notNullValue()));
 
     }
+    //TODO:add tests for put
 
 }

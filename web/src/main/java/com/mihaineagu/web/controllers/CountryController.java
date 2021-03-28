@@ -4,10 +4,12 @@ import com.mihaineagu.data.api.v1.models.CountryDTO;
 import com.mihaineagu.data.api.v1.models.CountryListDTO;
 import com.mihaineagu.service.interfaces.CountryService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
+import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -45,10 +47,10 @@ public class CountryController {
             countryDTO = countryService.findCountryByIdWithRegion(id);
         else
             countryDTO = countryService.findCountryByIdWithoutRegion(id);
-        if(countryDTO.isPresent())
-            return countryDTO.get();
-        else
-            throw new RessourceNotFoundException();
+
+        countryDTO.orElseThrow(RessourceNotFoundException::new);
+
+        return countryDTO.get();
     }
 
     @PostMapping(path = "/countries")
@@ -62,5 +64,28 @@ public class CountryController {
             return returned.get();
         else
             throw new DuplicateEntityExceptions();
+    }
+
+    @PutMapping("/countries/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public CountryDTO updateCountry(
+            @RequestBody CountryDTO countryDTO,
+            @PathVariable(name = "id") Long id) {
+
+        Optional<CountryDTO> returned = countryService.findCountryByIdWithoutRegion(id);
+
+        returned.orElseThrow(RessourceNotFoundException::new);
+
+        Optional<CountryDTO> saved = returned.map(country -> {
+            country.setCountryName(countryDTO.getCountryName());
+            return countryService.saveCountry(country);
+        });
+        saved.orElseThrow(FailSaveException::new);
+
+        return saved.map(countryDTO1 -> {
+            countryDTO1.setUri(URI +countryDTO1.getUri());
+            return countryDTO1;
+        }).get();
+
     }
 }

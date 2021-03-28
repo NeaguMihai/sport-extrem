@@ -17,5 +17,7 @@ public interface CountryService {
 
     Optional<CountryDTO> addNewCountry(CountryDTO countryDTO);
 
+    CountryDTO saveCountry(CountryDTO countryDTO);
+
     void setUri(String uri);
 }

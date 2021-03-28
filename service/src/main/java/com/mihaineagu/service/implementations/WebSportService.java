@@ -94,5 +94,11 @@ public class WebSportService implements SportService {
         }
     }
 
+    @Override
+    public Optional<SportDTO> saveSport(SportDTO sportDTO) {
+        Sport sport = sportMapper.DTOToSport(sportDTO);
+        return Optional.of(sportRepository.save(sport)).map(sportMapper::sportToDTO);
+    }
+
 
 }

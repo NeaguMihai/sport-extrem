@@ -2,6 +2,7 @@ package com.mihaineagu.service.interfaces;
 
 import com.mihaineagu.data.api.v1.models.LocationDTO;
 import com.mihaineagu.data.api.v1.models.RegionDTO;
+import com.mihaineagu.data.domain.Location;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,8 @@ public interface LocationService {
 
     Optional<LocationDTO> findByIdWithoutSports(Long id);
 
+    Optional<Location> findById(Long id);
+
     Boolean findIfExistent(LocationDTO locationDTO, Long id);
 
     List<LocationDTO> findByRegionIdWithoutSports(Long regionId);
@@ -21,6 +24,10 @@ public interface LocationService {
     List<LocationDTO> findByRegionIdWithSports(Long regionId);
 
     Optional<LocationDTO> saveLocation(LocationDTO locationDTO, RegionDTO regionDTO);
+
+    Optional<LocationDTO> saveLocation(Location location);
+
+
 
     void setUri(String locationUri, String sportUri);
 }

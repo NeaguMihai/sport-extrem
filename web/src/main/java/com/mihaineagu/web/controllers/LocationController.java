@@ -3,6 +3,7 @@ package com.mihaineagu.web.controllers;
 import com.mihaineagu.data.api.v1.models.LocationDTO;
 import com.mihaineagu.data.api.v1.models.LocationListDTO;
 import com.mihaineagu.data.api.v1.models.RegionDTO;
+import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.RegionService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
@@ -54,10 +55,8 @@ public class LocationController {
         }else {
             locationDTO = locationService.findByIdWithoutSports(id);
         }
-        if(locationDTO.isPresent())
-            return locationDTO.get();
-        else
-            throw new RessourceNotFoundException();
+        locationDTO.orElseThrow(RessourceNotFoundException::new);
+        return locationDTO.get();
     }
 
     @PostMapping(path = "/regions/{region_id}/locations")
@@ -85,6 +84,27 @@ public class LocationController {
         } else
             throw new RessourceNotFoundException();
 
+    }
+
+    @PutMapping(path = "/locations/{id}")
+    public LocationDTO updateLocation(
+            @PathVariable(name = "id") Long id,
+            @RequestBody LocationDTO locationDTO) {
+        Optional<Location> returned = locationService.findById(id);
+
+        returned.orElseThrow(RessourceNotFoundException::new);
+
+        Optional<LocationDTO> saved = returned.flatMap(location -> {
+                location.setLocationName(locationDTO.getLocationName());
+                return locationService.saveLocation(location);
+            });
+
+        saved.orElseThrow(FailSaveException::new);
+
+        return saved.map(locationDTO1 -> {
+            locationDTO1.setUri(LOCATION_URI + locationDTO1.getUri());
+            return locationDTO1;
+        }).get();
     }
 }
 

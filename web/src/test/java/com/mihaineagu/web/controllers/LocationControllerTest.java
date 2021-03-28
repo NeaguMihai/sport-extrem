@@ -177,5 +177,6 @@ class LocationControllerTest extends AbstractControllerTest{
                 .andExpect(jsonPath("$.locationName", equalTo(locationDTO.getLocationName())));
 
     }
+    //TODO:add tests for put
 
 }

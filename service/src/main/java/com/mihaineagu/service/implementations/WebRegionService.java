@@ -75,6 +75,11 @@ public class WebRegionService implements RegionService {
     }
 
     @Override
+    public Optional<Region> findRegionById(Long id) {
+        return regionRepository.findById(id);
+    }
+
+    @Override
     public Optional<RegionDTO> findByIdWithLocation(Long id) {
         return regionRepository.findById(id)
                 .map(region -> {
@@ -110,6 +115,12 @@ public class WebRegionService implements RegionService {
         Optional<Region> returned = Optional.of(regionRepository.save(toBeSaved));
 
         return returned.map(regionMapper::regionToDTO);
+    }
+
+    @Override
+    public Optional<RegionDTO> saveRegion(Region region) {
+        return Optional.of(regionRepository.save(region)).map(regionMapper::regionToDTO);
+
     }
 
 

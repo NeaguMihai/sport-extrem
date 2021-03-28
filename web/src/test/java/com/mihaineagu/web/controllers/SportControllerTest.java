@@ -120,5 +120,6 @@ public class SportControllerTest extends AbstractControllerTest{
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.errorMessage", equalTo(EXISTS_ERROR)));
     }
+    //TODO:add tests for put
 
 }

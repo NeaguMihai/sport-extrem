@@ -16,5 +16,7 @@ public interface SportService {
 
     Optional<SportDTO> addNewSport(SportDTO sportDTO);
 
+    Optional<SportDTO> saveSport(SportDTO sportDTO);
+
     void setUri(String uri);
 }

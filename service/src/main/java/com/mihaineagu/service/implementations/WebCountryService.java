@@ -95,5 +95,13 @@ public class WebCountryService implements CountryService {
             return Optional.empty();
     }
 
+    @Override
+    public CountryDTO saveCountry(CountryDTO countryDTO) {
+        Country toBeSaved = countryMapper.DTOTOCountry(countryDTO);
+        Country country = countryRepository.save(toBeSaved);
+
+        return countryMapper.countryToDTO(country);
+    }
+
 
 }

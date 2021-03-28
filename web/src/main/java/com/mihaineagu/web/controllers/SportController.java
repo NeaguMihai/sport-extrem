@@ -4,6 +4,7 @@ import com.mihaineagu.data.api.v1.models.SportDTO;
 import com.mihaineagu.data.api.v1.models.SportListDTO;
 import com.mihaineagu.service.interfaces.SportService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
+import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -46,9 +47,31 @@ public class SportController {
     public SportDTO addNewSport(@RequestBody @NonNull SportDTO sportDTO) {
         sportDTO.setUri(null);
         Optional<SportDTO> returned = sportService.addNewSport(sportDTO);
-        if(returned.isPresent())
-            return returned.get();
-        else
-            throw new DuplicateEntityExceptions();
+
+        returned.orElseThrow(DuplicateEntityExceptions::new);
+
+        return returned.get();
+    }
+
+    @PutMapping(path = "/sports/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public SportDTO updateSport(
+            @PathVariable(name = "id") Long id,
+            @RequestBody SportDTO sportDTO) {
+        Optional<SportDTO> returned = sportService.findById(id);
+
+        returned.orElseThrow(RessourceNotFoundException::new);
+
+        Optional<SportDTO> saved = returned.flatMap(toBeSaved -> {
+            toBeSaved.setSportType(sportDTO.getSportType());
+            return sportService.saveSport(toBeSaved);
+        });
+
+        saved.orElseThrow(FailSaveException::new);
+
+        return saved.map(sportDTO1 -> {
+            sportDTO1.setUri(URI + sportDTO1.getUri());
+            return sportDTO1;
+        }).get();
     }
 }

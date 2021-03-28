@@ -12,9 +12,13 @@ public interface InformationService {
 
     Optional<InformationDTO> getInformationById(Long locationId, Long sportId);
 
+    Optional<Information> getInformationByIdforUpdate(Long locationId, Long sportId);
+
     List<Information> getInformationByLocationId(Long id);
 
     List<Information> getInformationBySportId(Long id);
 
     Optional<InformationDTO> saveInformation(InformationDTO informationDTO, LocationDTO locationDTO, SportDTO sportDTO);
+
+    Optional<InformationDTO> saveInformation(Information information);
 }

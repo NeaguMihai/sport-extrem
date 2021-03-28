@@ -76,6 +76,11 @@ public class WebLocationService implements LocationService {
     }
 
     @Override
+    public Optional<Location> findById(Long id) {
+        return locationRepository.findById(id);
+    }
+
+    @Override
     public Boolean findIfExistent(LocationDTO locationDTO, Long id) {
         Optional<Location> location = locationRepository.findLocationByRegionIdAndLocationName(id, locationDTO.getLocationName());
 
@@ -114,5 +119,10 @@ public class WebLocationService implements LocationService {
 
         return saved.map(locationMapper::locationToDTO);
 
+    }
+
+    @Override
+    public Optional<LocationDTO> saveLocation(Location location) {
+        return Optional.of(locationRepository.save(location)).map(locationMapper::locationToDTO);
     }
 }

@@ -18,6 +18,8 @@ public interface RegionService {
 
     List<RegionDTO> findByCountryIdWIthLocation(Long id);
 
+    Optional<Region> findRegionById(Long id);
+
     Optional<RegionDTO> findByIdWithLocation(Long id);
 
     Optional<RegionDTO> findByIdWithoutLocation(Long id);
@@ -25,4 +27,6 @@ public interface RegionService {
     Boolean findIfExists(RegionDTO regionDTO, Long id);
 
     Optional<RegionDTO> saveRegion(RegionDTO region, CountryDTO country);
+
+    Optional<RegionDTO> saveRegion(Region region);
 }

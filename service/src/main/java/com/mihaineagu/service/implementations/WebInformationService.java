@@ -40,6 +40,11 @@ public class WebInformationService implements InformationService {
     }
 
     @Override
+    public Optional<Information> getInformationByIdforUpdate(Long locationId, Long sportId) {
+        return informationRepository.getInformationByLocationIdAndSportId(locationId, sportId);
+    }
+
+    @Override
     public List<Information> getInformationByLocationId(Long id) {
         return informationRepository.getInformationByLocationId(id);
     }
@@ -62,5 +67,10 @@ public class WebInformationService implements InformationService {
         toBeSaved.setLocation(location);
 
         return Optional.of(informationRepository.save(toBeSaved)).map(informationMapper::informationToDTO);
+    }
+
+    @Override
+    public Optional<InformationDTO> saveInformation(Information information) {
+        return Optional.of(informationRepository.save(information)).map(informationMapper::informationToDTO);
     }
 }

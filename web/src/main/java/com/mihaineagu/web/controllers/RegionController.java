@@ -3,7 +3,7 @@ package com.mihaineagu.web.controllers;
 import com.mihaineagu.data.api.v1.models.CountryDTO;
 import com.mihaineagu.data.api.v1.models.RegionDTO;
 import com.mihaineagu.data.api.v1.models.RegionListDTO;
-import com.mihaineagu.data.domain.Country;
+import com.mihaineagu.data.domain.Region;
 import com.mihaineagu.service.interfaces.CountryService;
 import com.mihaineagu.service.interfaces.RegionService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
@@ -18,14 +18,14 @@ import java.util.Optional;
 @RequestMapping("/api/v1")
 public class RegionController {
 
-    private String uri = "/api/v1/regions/";
+    private final String URI = "/api/v1/regions/";
     private final RegionService regionService;
     private final CountryService countryService;
 
     public RegionController(RegionService regionService, CountryService countryService) {
         this.regionService = regionService;
         this.countryService = countryService;
-        regionService.setUri(uri);
+        regionService.setUri(URI);
     }
 
     @GetMapping(path = "/countries/{country_id}/regions", produces = "application/json")
@@ -52,10 +52,8 @@ public class RegionController {
         else
             regionDTO = regionService.findByIdWithoutLocation(id);
 
-        if (regionDTO.isPresent())
-            return regionDTO.get();
-        else
-            throw new RessourceNotFoundException();
+        regionDTO.orElseThrow(RessourceNotFoundException::new);
+        return regionDTO.get();
     }
 
     @PostMapping(path = "/countries/{country_id}/regions")
@@ -66,21 +64,40 @@ public class RegionController {
 
         Optional<CountryDTO> countryOptional = countryService.findCountryByIdWithoutRegion(id);
 
-        if(countryOptional.isPresent()){
-            regionDTO.setUri(null);
-            if(regionService.findIfExists(regionDTO, id)){
-                throw new DuplicateEntityExceptions();
-            }else {
-                Optional<RegionDTO> saved = regionService.saveRegion(regionDTO, countryOptional.get());
+        countryOptional.orElseThrow(RessourceNotFoundException::new);
 
-                if (saved.isPresent())
-                    return saved.get();
-                else
-                    throw new FailSaveException();
-            }
+        regionDTO.setUri(null);
+        if(regionService.findIfExists(regionDTO, id)){
+            throw new DuplicateEntityExceptions();
+        }else {
+            Optional<RegionDTO> saved = regionService.saveRegion(regionDTO, countryOptional.get());
 
-        } else
-           throw new RessourceNotFoundException();
+            saved.orElseThrow(FailSaveException::new);
+            return saved.get();
+        }
+
+    }
+
+    @PutMapping("/regions/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public RegionDTO updateRegoin(
+            @PathVariable(name = "id") Long id,
+            @RequestBody RegionDTO regionDTO) {
+
+        Optional<Region> returned = regionService.findRegionById(id);
+
+        returned.orElseThrow(RessourceNotFoundException::new);
+
+        Optional<RegionDTO> saved = returned.flatMap(region -> {
+                    region.setRegionName(regionDTO.getRegionName());
+                    return regionService.saveRegion(region);
+                    });
+
+        saved.orElseThrow(FailSaveException::new);
+
+        return saved.map(regionDTO1 ->{
+            regionDTO1.setUri(URI+regionDTO1.getUri());
+            return regionDTO1;}).get();
     }
 
 }
