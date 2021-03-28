@@ -151,6 +151,6 @@ class WebRegionServiceTest {
         Optional<RegionDTO> returned = regionService.saveRegion(toBeSaved, country);
 
         assertTrue(returned.isPresent());
-        assertEquals(toBeSaved.toString(), returned.get().toString());
+        assertEquals(toBeSaved.getRegionName(), returned.get().getRegionName());
     }
 }

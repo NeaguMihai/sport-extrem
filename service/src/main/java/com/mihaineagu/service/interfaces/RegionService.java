@@ -32,5 +32,4 @@ public interface RegionService {
 
     void deleteRegion(Long id);
 
-    void deleteRegionRecursive(Long id);
 }

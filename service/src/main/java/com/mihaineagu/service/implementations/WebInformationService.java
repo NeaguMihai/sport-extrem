@@ -55,15 +55,9 @@ public class WebInformationService implements InformationService {
     }
 
     @Override
-    public List<Information> getInformationBySportId(Long id) {
-        return informationRepository.getInformationBySportId(id);
-    }
-
-    @Override
-    public Optional<InformationDTO> saveInformation(InformationDTO informationDTO, LocationDTO locationDTO, SportDTO sportDTO) {
+    public Optional<InformationDTO> saveInformation(InformationDTO informationDTO, Location location, SportDTO sportDTO) {
         Information toBeSaved = informationMapper.DTOToInformation(informationDTO);
         Sport sport = sportMapper.DTOToSport(sportDTO);
-        Location location = locationMapper.DTOTOLocation(locationDTO);
 
         toBeSaved.setSportId(sport.getId());
         toBeSaved.setSport(sport);
@@ -80,32 +74,10 @@ public class WebInformationService implements InformationService {
     }
 
     @Override
-    public void deleteInformation(Information information) {
-        informationRepository.delete(information);
-    }
-
-    @Override
     public void deleteInformationById(Long locationId, Long sportId) {
 
         logger.info(informationRepository.deleteByLocationIdAndSportId(locationId, sportId));
 
     }
 
-    @Override
-    public void deleteInformationByLocationId(Long locationId) {
-            informationRepository.deleteByLocationId(locationId);
-
-    }
-
-    @Override
-    public void deleteInformationByRegionId(Long locationId) {
-
-        informationRepository.deleteByLocationIdIn(locationId);
-    }
-
-    @Override
-    public void deleteInformationBySportId(Long regionId) {
-            informationRepository.deleteBySportId(regionId);
-
-    }
 }

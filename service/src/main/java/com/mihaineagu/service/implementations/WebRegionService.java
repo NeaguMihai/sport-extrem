@@ -10,12 +10,14 @@ import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.RegionService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class WebRegionService implements RegionService {
 
     private String uri;
@@ -139,12 +141,5 @@ public class WebRegionService implements RegionService {
 
         regionRepository.deleteById(id);
     }
-
-    @Override
-    public void deleteRegionRecursive(Long id) {
-        locationService.deleteAllLocationsByRegionId(id);
-        regionRepository.deleteById(id);
-    }
-
 
 }

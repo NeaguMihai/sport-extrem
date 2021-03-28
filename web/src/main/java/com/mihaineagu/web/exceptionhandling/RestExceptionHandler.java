@@ -23,6 +23,9 @@ public class RestExceptionHandler  {
     @ExceptionHandler(DuplicateEntityExceptions.class)
     protected ResponseEntity<ErrorResponse> handleConflict(DuplicateEntityExceptions exception) {
 
+        logger.error(exception);
+
+
         ErrorResponse response = new ErrorResponse();
         response.setErrorMessage("This entity already exists!");
         response.setErrorCode("Bad Request");
@@ -32,6 +35,8 @@ public class RestExceptionHandler  {
 
     @ExceptionHandler(RessourceNotFoundException.class)
     protected ResponseEntity<ErrorResponse> handleNotFoundRessource(RessourceNotFoundException exception) {
+
+        logger.error(exception);
 
         ErrorResponse response = new ErrorResponse();
         response.setErrorMessage("Requested entity not found!");
@@ -44,6 +49,8 @@ public class RestExceptionHandler  {
     @ExceptionHandler(FailSaveException.class)
     protected ResponseEntity<ErrorResponse> handleFaiSaveException(FailSaveException exception) {
 
+        logger.error(exception);
+
         ErrorResponse response = new ErrorResponse();
         response.setErrorMessage("The operation failed, please try again.");
         response.setErrorCode("BAD_GATEAWAY");
@@ -54,6 +61,7 @@ public class RestExceptionHandler  {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handlePageNotFound(Exception e){
 
+        logger.error(e);
 
         logger.error(e);
         ErrorResponse response = new ErrorResponse();
@@ -64,7 +72,7 @@ public class RestExceptionHandler  {
     }
 
     @ExceptionHandler(Error.class)
-    protected ResponseEntity<ErrorResponse> handleServerError() {
+    protected ResponseEntity<ErrorResponse> handleServerError(Exception e) {
 
 
         ErrorResponse response = new ErrorResponse();
@@ -86,7 +94,10 @@ public class RestExceptionHandler  {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    protected  ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(){
+    protected  ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(Exception e){
+
+        logger.error(e);
+
         ErrorResponse response = new ErrorResponse();
         response.setErrorMessage("Please check the request and try again.");
         response.setErrorCode(HttpStatus.BAD_REQUEST.toString());

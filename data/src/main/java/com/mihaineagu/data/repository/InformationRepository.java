@@ -26,4 +26,6 @@ public interface InformationRepository extends JpaRepository<Information, Long> 
     @Modifying
     @Query(value = "DELETE FROM location_sport ls WHERE ls.location_id IN (SELECT id FROM location WHERE location.region_id = :id)", nativeQuery = true)
     void deleteByLocationIdIn(@Param("id") Long id);
+
+
 }

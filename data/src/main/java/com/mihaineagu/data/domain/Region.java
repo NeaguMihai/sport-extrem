@@ -2,13 +2,10 @@ package com.mihaineagu.data.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+
 import java.util.Set;
 
 @Data
@@ -28,6 +25,6 @@ public class Region {
     @EqualsAndHashCode.Exclude
     private Country country;
 
-    @OneToMany(mappedBy = "region")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "region")
     private Set<Location> locations = new HashSet<>();
 }

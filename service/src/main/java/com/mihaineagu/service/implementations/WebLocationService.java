@@ -84,6 +84,11 @@ public class WebLocationService implements LocationService {
     }
 
     @Override
+    public Optional<Location> findLocation(Long id) {
+        return locationRepository.findById(id);
+    }
+
+    @Override
     public Optional<Location> findById(Long id) {
         return locationRepository.findById(id);
     }
@@ -145,22 +150,4 @@ public class WebLocationService implements LocationService {
         locationRepository.deleteById(id);
     }
 
-    @Override
-    public void deleteRecursiveLocation(Long id) {
-        informationService.deleteInformationByLocationId(id);
-
-        locationRepository.deleteById(id);
-
-    }
-
-    @Override
-    public void deleteAllLocationsByRegionId(Long id) {
-        informationService.deleteInformationByRegionId(id);
-        locationRepository.deleteByRegionId(id);
-    }
-
-    @Override
-    public void deleteAllLocationsByCountryId(Long id) {
-        informationService.deleteInformation();
-    }
 }

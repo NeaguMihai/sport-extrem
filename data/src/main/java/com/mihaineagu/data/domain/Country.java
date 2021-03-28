@@ -1,13 +1,9 @@
 package com.mihaineagu.data.domain;
 
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -22,6 +18,6 @@ public class Country {
     @Column(name = "country_name")
     private String countryName;
 
-    @OneToMany(mappedBy = "country")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
     private Set<Region> regions = new HashSet<>();
 }

@@ -92,14 +92,10 @@ public class CountryController {
 
     @DeleteMapping(path = "/countries/{id}")
     public void deleteCountry(
-            @PathVariable(name = "id") Long id,
-            @RequestParam(name = "recursive", defaultValue = "false") Boolean recursive) {
+            @PathVariable(name = "id") Long id) {
 
-        if (recursive){
 
-        }else{
             countryService.deleteCountry(id);
 
-        }
     }
 }

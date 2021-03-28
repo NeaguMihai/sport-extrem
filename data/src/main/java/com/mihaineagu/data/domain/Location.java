@@ -19,7 +19,7 @@ public class Location {
     private String locationName;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", nullable = false)
     @EqualsAndHashCode.Exclude
     private Region region;

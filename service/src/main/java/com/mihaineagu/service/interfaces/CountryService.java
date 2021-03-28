@@ -21,7 +21,5 @@ public interface CountryService {
 
     void deleteCountry(Long id);
 
-    void deleteCountryRecursive(Long id);
-
     void setUri(String uri);
 }

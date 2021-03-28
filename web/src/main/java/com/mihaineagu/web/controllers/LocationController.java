@@ -111,12 +111,8 @@ public class LocationController {
 
     @DeleteMapping(path = "/locations/{id}")
     public void deleteLocation(
-            @PathVariable(name = "id") Long id,
-            @RequestParam(name = "recursive", defaultValue = "false") Boolean recursive) {
+            @PathVariable(name = "id") Long id) {
 
-        if (recursive) {
-                locationService.deleteRecursiveLocation(id);
-        }else
             locationService.deleteLocation(id);
 
     }

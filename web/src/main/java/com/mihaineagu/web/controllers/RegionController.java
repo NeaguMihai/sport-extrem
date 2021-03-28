@@ -107,15 +107,10 @@ public class RegionController {
     @DeleteMapping(path = "/regions/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteRegion(
-            @PathVariable(name = "id") Long id,
-            @RequestParam(name = "recursive", defaultValue = "false") Boolean recursive) {
+            @PathVariable(name = "id") Long id) {
 
-        logger.info("am ajuns aici");
-        if (recursive) {
-            regionService.deleteRegionRecursive(id);
-        }else {
             regionService.deleteRegion(id);
-        }
+
     }
 
 }

@@ -13,6 +13,7 @@ import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("webSportService")
+@Transactional
 public class WebSportService implements SportService {
 
     private static final Logger logger = LogManager.getLogger(WebSportService.class);
@@ -55,8 +57,7 @@ public class WebSportService implements SportService {
 
     @Override
     public Optional<SportDTO> findBySportType(String sportType) {
-        return sportRepository.findBySportType(sportType)
-                .map(sportMapper::sportToDTO)
+        return sportRepository.findBySportType(sportType).map(sportMapper::sportToDTO)
                 .map(sportDTO -> {sportDTO.setUri(uri + sportDTO.getUri()); return sportDTO;});
     }
 
@@ -94,7 +95,12 @@ public class WebSportService implements SportService {
     public Optional<SportDTO> addNewSport(SportDTO sportDTO) {
         Sport sport = sportMapper.DTOToSport(sportDTO);
         if(findBySportType(sport.getSportType()).isEmpty())
-            return Optional.of(sportMapper.sportToDTO(sportRepository.save(sport)));
+            return Optional.of(sportRepository.save(sport))
+                    .map(sportMapper::sportToDTO)
+                    .map(sportDTO1 -> {
+                        sportDTO1.setUri(uri + sportDTO1.getUri());
+                        return sportDTO1;
+                    });
         else {
             return Optional.empty();
         }
@@ -103,7 +109,10 @@ public class WebSportService implements SportService {
     @Override
     public Optional<SportDTO> saveSport(SportDTO sportDTO) {
         Sport sport = sportMapper.DTOToSport(sportDTO);
-        return Optional.of(sportRepository.save(sport)).map(sportMapper::sportToDTO);
+        return Optional.of(sportRepository.save(sport)).map(sportMapper::sportToDTO).map(sportDTO1 -> {
+            sportDTO1.setUri(uri + sportDTO1.getUri());
+            return sportDTO1;
+        });
     }
 
     @Override
@@ -111,13 +120,5 @@ public class WebSportService implements SportService {
             sportRepository.deleteById(id);
 
     }
-
-    @Override
-    public void deleteSportRecursive(Long id) {
-        informationService.deleteInformationBySportId(id);
-
-        sportRepository.deleteById(id);
-    }
-
 
 }

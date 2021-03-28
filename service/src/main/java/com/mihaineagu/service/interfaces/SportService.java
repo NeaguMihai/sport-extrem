@@ -20,7 +20,5 @@ public interface SportService {
 
     void deleteSport(Long id);
 
-    void deleteSportRecursive(Long id);
-
     void setUri(String uri);
 }

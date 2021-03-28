@@ -1,9 +1,11 @@
 package com.mihaineagu.web.controllers;
 
+import com.mihaineagu.data.api.v1.mappers.LocationMapper;
 import com.mihaineagu.data.api.v1.models.InformationDTO;
 import com.mihaineagu.data.api.v1.models.LocationDTO;
 import com.mihaineagu.data.api.v1.models.SportDTO;
 import com.mihaineagu.data.domain.Information;
+import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.service.interfaces.InformationService;
 import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.SportService;
@@ -42,7 +44,7 @@ public class InformationController {
             @PathVariable(name = "sport_id") Long sportId,
             @RequestBody InformationDTO informationDTO) {
 
-        Optional<LocationDTO> locationOptional = locationService.findByIdWithoutSports(locationId);
+        Optional<Location> locationOptional = locationService.findLocation(locationId);
         Optional<SportDTO> sportOptional = sportService.findById(sportId);
 
         locationOptional.orElseThrow(RessourceNotFoundException::new);
@@ -61,8 +63,8 @@ public class InformationController {
             savedInfo.orElseThrow(FailSaveException::new);
 
             sportOptional.get().setInformation(savedInfo.get());
-            locationOptional.get().setSports(List.of(sportOptional.get()));
-            return locationOptional.get();
+            locationOptional.map(LocationMapper.INSTANCE::locationToDTO).get().setSports(List.of(sportOptional.get()));
+            return locationOptional.map(LocationMapper.INSTANCE::locationToDTO).get();
 
     }
 
