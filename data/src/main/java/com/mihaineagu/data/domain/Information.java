@@ -19,12 +19,12 @@ public class Information {
     @Column(name = "sport_id")
     private Long sportId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("location_id")
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("sport_id")
     @JoinColumn(name = "sport_id")
     private Sport sport;

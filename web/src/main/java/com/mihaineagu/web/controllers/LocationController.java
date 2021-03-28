@@ -9,6 +9,8 @@ import com.mihaineagu.service.interfaces.RegionService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
 import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1")
 public class LocationController {
 
+    private static final Logger logger = LogManager.getLogger(LocationController.class);
     private final String LOCATION_URI = "/api/v1/locations/";
     private final String SPORT_URI = "/api/v1/sports/";
     private final LocationService locationService;
@@ -67,22 +70,21 @@ public class LocationController {
 
         Optional<RegionDTO> regionOptional = regionService.findByIdWithoutLocation(id);
 
-        if (regionOptional.isPresent()) {
+        try{
+        regionOptional.orElseThrow(RessourceNotFoundException::new);
 
-            locationDTO.setUri(null);
-            if(locationService.findIfExistent(locationDTO, id))
-                throw new DuplicateEntityExceptions();
-            else {
-                Optional<LocationDTO> saved = locationService.saveLocation(locationDTO, regionOptional.get());
+        }catch (RessourceNotFoundException e) {
+            logger.error(e.getMessage());
+        }
+        locationDTO.setUri(null);
+        if(locationService.findIfExistent(locationDTO, id))
+            throw new DuplicateEntityExceptions();
+        else {
+            Optional<LocationDTO> saved = locationService.saveLocation(locationDTO, regionOptional.get());
 
-                if(saved.isPresent())
-                    return saved.get();
-                else
-                    throw new FailSaveException();
-            }
-
-        } else
-            throw new RessourceNotFoundException();
+            saved.orElseThrow(FailSaveException::new);
+            return saved.get();
+        }
 
     }
 
@@ -105,6 +107,18 @@ public class LocationController {
             locationDTO1.setUri(LOCATION_URI + locationDTO1.getUri());
             return locationDTO1;
         }).get();
+    }
+
+    @DeleteMapping(path = "/locations/{id}")
+    public void deleteLocation(
+            @PathVariable(name = "id") Long id,
+            @RequestParam(name = "recursive", defaultValue = "false") Boolean recursive) {
+
+        if (recursive) {
+                locationService.deleteRecursiveLocation(id);
+        }else
+            locationService.deleteLocation(id);
+
     }
 }
 

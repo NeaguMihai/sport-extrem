@@ -9,6 +9,8 @@ import com.mihaineagu.service.interfaces.RegionService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
 import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1")
 public class RegionController {
 
+    private static final Logger logger = LogManager.getLogger(RegionController.class);
     private final String URI = "/api/v1/regions/";
     private final RegionService regionService;
     private final CountryService countryService;
@@ -67,6 +70,7 @@ public class RegionController {
         countryOptional.orElseThrow(RessourceNotFoundException::new);
 
         regionDTO.setUri(null);
+
         if(regionService.findIfExists(regionDTO, id)){
             throw new DuplicateEntityExceptions();
         }else {
@@ -98,6 +102,20 @@ public class RegionController {
         return saved.map(regionDTO1 ->{
             regionDTO1.setUri(URI+regionDTO1.getUri());
             return regionDTO1;}).get();
+    }
+
+    @DeleteMapping(path = "/regions/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteRegion(
+            @PathVariable(name = "id") Long id,
+            @RequestParam(name = "recursive", defaultValue = "false") Boolean recursive) {
+
+        logger.info("am ajuns aici");
+        if (recursive) {
+            regionService.deleteRegionRecursive(id);
+        }else {
+            regionService.deleteRegion(id);
+        }
     }
 
 }

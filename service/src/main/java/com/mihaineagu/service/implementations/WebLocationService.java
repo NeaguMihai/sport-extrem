@@ -6,9 +6,13 @@ import com.mihaineagu.data.api.v1.models.LocationDTO;
 import com.mihaineagu.data.api.v1.models.RegionDTO;
 import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.data.repository.LocationRepository;
+import com.mihaineagu.service.interfaces.InformationService;
 import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.SportService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,17 +20,21 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("webLocationService")
+@Transactional
 public class WebLocationService implements LocationService {
 
+    private static final Logger logger = LogManager.getLogger(WebLocationService.class);
     private String locationUri;
     private String sportUri;
     private final LocationMapper locationMapper;
     private final LocationRepository locationRepository;
     private final RegionMapper regionMapper;
     private final SportService sportService;
+    private final InformationService informationService;
 
-    public WebLocationService(LocationMapper locationMapper, LocationRepository locationRepository, RegionMapper regionMapper, SportService sportService) {
+    public WebLocationService(LocationMapper locationMapper, LocationRepository locationRepository, RegionMapper regionMapper, SportService sportService, InformationService informationService) {
         this.regionMapper = regionMapper;
+        this.informationService = informationService;
         locationUri = "";
         sportUri = "";
         this.locationMapper = locationMapper;
@@ -117,12 +125,42 @@ public class WebLocationService implements LocationService {
         toBeSaved.setRegion(regionMapper.DTOToRegion(regionDTO));
         Optional<Location> saved = Optional.of(locationRepository.save(toBeSaved));
 
-        return saved.map(locationMapper::locationToDTO);
+        return saved
+                .map(locationMapper::locationToDTO)
+                .map(locationDTO1 -> {
+                    locationDTO1.setUri(locationUri + locationDTO1.getUri());
+                    return  locationDTO1;
+                });
 
     }
 
     @Override
     public Optional<LocationDTO> saveLocation(Location location) {
         return Optional.of(locationRepository.save(location)).map(locationMapper::locationToDTO);
+    }
+
+    @Override
+    public void deleteLocation(Long id) {
+
+        locationRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteRecursiveLocation(Long id) {
+        informationService.deleteInformationByLocationId(id);
+
+        locationRepository.deleteById(id);
+
+    }
+
+    @Override
+    public void deleteAllLocationsByRegionId(Long id) {
+        informationService.deleteInformationByRegionId(id);
+        locationRepository.deleteByRegionId(id);
+    }
+
+    @Override
+    public void deleteAllLocationsByCountryId(Long id) {
+        informationService.deleteInformation();
     }
 }

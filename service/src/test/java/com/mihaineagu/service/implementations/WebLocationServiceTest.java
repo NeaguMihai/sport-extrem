@@ -5,6 +5,7 @@ import com.mihaineagu.data.api.v1.mappers.RegionMapper;
 import com.mihaineagu.data.api.v1.models.LocationDTO;
 import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.data.repository.LocationRepository;
+import com.mihaineagu.service.interfaces.InformationService;
 import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.SportService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,9 @@ class WebLocationServiceTest {
     @Mock
     SportService sportService;
 
+    @Mock
+    InformationService informationService;
+
     @BeforeEach
     void setUp() {
         locationMapper = LocationMapper.INSTANCE;
@@ -41,7 +45,7 @@ class WebLocationServiceTest {
         locationRepository = mock(LocationRepository.class);
         sportService = mock(SportService.class);
 
-        locationService = new WebLocationService(locationMapper, locationRepository, regionMapper, sportService);
+        locationService = new WebLocationService(locationMapper, locationRepository, regionMapper, sportService, informationService);
 
     }
 
@@ -66,5 +70,7 @@ class WebLocationServiceTest {
         assertEquals(locationMapper.locationToDTO(location1),locationDTOList.get(0));
         assertEquals(locationMapper.locationToDTO(location2),locationDTOList.get(1));
     }
+
+
 
 }

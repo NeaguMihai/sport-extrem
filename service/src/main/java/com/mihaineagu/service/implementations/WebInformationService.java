@@ -11,14 +11,19 @@ import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.data.domain.Sport;
 import com.mihaineagu.data.repository.InformationRepository;
 import com.mihaineagu.service.interfaces.InformationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service("webInformationService")
+@Transactional
 public class WebInformationService implements InformationService {
 
+    private static final Logger logger = LogManager.getLogger(WebInformationService.class);
     private final InformationRepository informationRepository;
     private final InformationMapper informationMapper;
     private final SportMapper sportMapper;
@@ -72,5 +77,35 @@ public class WebInformationService implements InformationService {
     @Override
     public Optional<InformationDTO> saveInformation(Information information) {
         return Optional.of(informationRepository.save(information)).map(informationMapper::informationToDTO);
+    }
+
+    @Override
+    public void deleteInformation(Information information) {
+        informationRepository.delete(information);
+    }
+
+    @Override
+    public void deleteInformationById(Long locationId, Long sportId) {
+
+        logger.info(informationRepository.deleteByLocationIdAndSportId(locationId, sportId));
+
+    }
+
+    @Override
+    public void deleteInformationByLocationId(Long locationId) {
+            informationRepository.deleteByLocationId(locationId);
+
+    }
+
+    @Override
+    public void deleteInformationByRegionId(Long locationId) {
+
+        informationRepository.deleteByLocationIdIn(locationId);
+    }
+
+    @Override
+    public void deleteInformationBySportId(Long regionId) {
+            informationRepository.deleteBySportId(regionId);
+
     }
 }

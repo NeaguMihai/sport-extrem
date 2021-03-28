@@ -1,6 +1,7 @@
 package com.mihaineagu.service.implementations;
 
 import com.mihaineagu.data.api.v1.mappers.CountryMapper;
+import com.mihaineagu.data.api.v1.mappers.RegionMapper;
 import com.mihaineagu.data.api.v1.models.CountryDTO;
 import com.mihaineagu.data.api.v1.models.RegionDTO;
 import com.mihaineagu.data.domain.Country;
@@ -32,6 +33,7 @@ class WebCountryServiceTest {
     @Mock
     RegionService regionService;
     CountryMapper countryMapper;
+    RegionMapper regionMapper;
 
     CountryService countryService;
 
@@ -39,10 +41,10 @@ class WebCountryServiceTest {
     void setUp() {
         countryRepository = mock(CountryRepository.class);
         regionService = mock(RegionService.class);
-
+        regionMapper = RegionMapper.INSTANCE;
         countryMapper = CountryMapper.INSTANCE;
 
-        countryService = new WebCountryService(countryRepository, regionService, countryMapper);
+        countryService = new WebCountryService(countryRepository, regionService, countryMapper, regionMapper);
         countryService.setUri(URI);
     }
 

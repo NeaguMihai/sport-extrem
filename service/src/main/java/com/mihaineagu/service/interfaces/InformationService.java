@@ -21,4 +21,14 @@ public interface InformationService {
     Optional<InformationDTO> saveInformation(InformationDTO informationDTO, LocationDTO locationDTO, SportDTO sportDTO);
 
     Optional<InformationDTO> saveInformation(Information information);
+
+    void deleteInformation(Information information);
+
+    void deleteInformationById(Long locationId, Long sportId);
+
+    void deleteInformationByLocationId(Long locationId);
+
+    void deleteInformationByRegionId(Long regionId);
+
+    void deleteInformationBySportId(Long locationId);
 }

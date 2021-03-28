@@ -10,16 +10,21 @@ import com.mihaineagu.service.interfaces.SportService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
 import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+
+
 @RestController
 @RequestMapping("/api/v1")
 public class InformationController {
 
+    private static final Logger logger = LogManager.getLogger(InformationController.class);
     private final InformationService informationService;
     private final LocationService locationService;
     private final SportService sportService;
@@ -89,6 +94,16 @@ public class InformationController {
         sportOptional.get().setInformation(saved.get());
         locationOptional.get().setSports(List.of(sportOptional.get()));
         return locationOptional.get();
+
+    }
+
+    @DeleteMapping(path = "/locations/{location_id}/sports/{sport_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteInformation(
+            @PathVariable(name = "location_id") Long locationId,
+            @PathVariable(name = "sport_id") Long sportId) {
+
+        informationService.deleteInformationById(locationId, sportId);
 
     }
 }

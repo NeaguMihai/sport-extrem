@@ -19,5 +19,9 @@ public interface CountryService {
 
     CountryDTO saveCountry(CountryDTO countryDTO);
 
+    void deleteCountry(Long id);
+
+    void deleteCountryRecursive(Long id);
+
     void setUri(String uri);
 }

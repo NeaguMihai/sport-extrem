@@ -18,5 +18,9 @@ public interface SportService {
 
     Optional<SportDTO> saveSport(SportDTO sportDTO);
 
+    void deleteSport(Long id);
+
+    void deleteSportRecursive(Long id);
+
     void setUri(String uri);
 }

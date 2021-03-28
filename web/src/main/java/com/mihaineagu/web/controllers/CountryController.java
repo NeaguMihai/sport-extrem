@@ -6,6 +6,8 @@ import com.mihaineagu.service.interfaces.CountryService;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
 import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1")
 public class CountryController {
 
+    private static final Logger logger = LogManager.getLogger(CountryController.class);
     private final String URI = "/api/v1/countries/";
     private final CountryService countryService;
 
@@ -60,10 +63,8 @@ public class CountryController {
 
         Optional<CountryDTO> returned = countryService.addNewCountry(countryDTO);
 
-        if (returned.isPresent())
-            return returned.get();
-        else
-            throw new DuplicateEntityExceptions();
+        returned.orElseThrow(DuplicateEntityExceptions::new);
+        return returned.get();
     }
 
     @PutMapping("/countries/{id}")
@@ -87,5 +88,18 @@ public class CountryController {
             return countryDTO1;
         }).get();
 
+    }
+
+    @DeleteMapping(path = "/countries/{id}")
+    public void deleteCountry(
+            @PathVariable(name = "id") Long id,
+            @RequestParam(name = "recursive", defaultValue = "false") Boolean recursive) {
+
+        if (recursive){
+
+        }else{
+            countryService.deleteCountry(id);
+
+        }
     }
 }

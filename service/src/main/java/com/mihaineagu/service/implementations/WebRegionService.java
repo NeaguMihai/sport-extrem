@@ -1,6 +1,7 @@
 package com.mihaineagu.service.implementations;
 
 import com.mihaineagu.data.api.v1.mappers.CountryMapper;
+import com.mihaineagu.data.api.v1.mappers.LocationMapper;
 import com.mihaineagu.data.api.v1.mappers.RegionMapper;
 import com.mihaineagu.data.api.v1.models.*;
 import com.mihaineagu.data.domain.Region;
@@ -22,8 +23,10 @@ public class WebRegionService implements RegionService {
     private final RegionMapper regionMapper;
     private final CountryMapper countryMapper;
     private final LocationService locationService;
+    private final LocationMapper locationMapper;
 
-    public WebRegionService(RegionRepository regionRepository, RegionMapper regionMapper, CountryMapper countryMapper, LocationService locationService) {
+    public WebRegionService(RegionRepository regionRepository, RegionMapper regionMapper, CountryMapper countryMapper, LocationService locationService, LocationMapper locationMapper) {
+        this.locationMapper = locationMapper;
         uri = "";
         this.countryMapper = countryMapper;
         this.regionRepository = regionRepository;
@@ -114,13 +117,33 @@ public class WebRegionService implements RegionService {
         toBeSaved.setCountry(countryMapper.DTOTOCountry(country));
         Optional<Region> returned = Optional.of(regionRepository.save(toBeSaved));
 
-        return returned.map(regionMapper::regionToDTO);
+        return returned.map(regionMapper::regionToDTO).map(regionDTO -> {
+            regionDTO.setUri(uri + regionDTO.getUri());
+            return regionDTO;
+        });
     }
 
     @Override
     public Optional<RegionDTO> saveRegion(Region region) {
-        return Optional.of(regionRepository.save(region)).map(regionMapper::regionToDTO);
+        return Optional.of(regionRepository.save(region))
+                .map(regionMapper::regionToDTO)
+                .map(regionDTO -> {
+                    regionDTO.setUri(uri + regionDTO.getUri());
+                    return regionDTO;
+                });
 
+    }
+
+    @Override
+    public void deleteRegion(Long id) {
+
+        regionRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteRegionRecursive(Long id) {
+        locationService.deleteAllLocationsByRegionId(id);
+        regionRepository.deleteById(id);
     }
 
 

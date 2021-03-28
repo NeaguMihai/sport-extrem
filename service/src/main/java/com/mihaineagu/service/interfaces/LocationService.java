@@ -27,7 +27,13 @@ public interface LocationService {
 
     Optional<LocationDTO> saveLocation(Location location);
 
+    void deleteLocation(Long id);
 
+    void deleteRecursiveLocation(Long id);
+
+    void deleteAllLocationsByRegionId(Long id);
+
+    void deleteAllLocationsByCountryId(Long id);
 
     void setUri(String locationUri, String sportUri);
 }

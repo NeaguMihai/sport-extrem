@@ -7,8 +7,13 @@ import com.mihaineagu.data.domain.Sport;
 import com.mihaineagu.data.repository.SportRepository;
 import com.mihaineagu.service.interfaces.InformationService;
 import com.mihaineagu.service.interfaces.SportService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +22,7 @@ import java.util.stream.Collectors;
 @Service("webSportService")
 public class WebSportService implements SportService {
 
+    private static final Logger logger = LogManager.getLogger(WebSportService.class);
     private String uri;
     private final SportMapper sportMapper;
     private final InformationMapper informationMapper;
@@ -98,6 +104,19 @@ public class WebSportService implements SportService {
     public Optional<SportDTO> saveSport(SportDTO sportDTO) {
         Sport sport = sportMapper.DTOToSport(sportDTO);
         return Optional.of(sportRepository.save(sport)).map(sportMapper::sportToDTO);
+    }
+
+    @Override
+    public void deleteSport(Long id) {
+            sportRepository.deleteById(id);
+
+    }
+
+    @Override
+    public void deleteSportRecursive(Long id) {
+        informationService.deleteInformationBySportId(id);
+
+        sportRepository.deleteById(id);
     }
 
 

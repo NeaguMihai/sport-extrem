@@ -1,6 +1,7 @@
 package com.mihaineagu.data.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
@@ -17,7 +18,9 @@ public class Location {
     @Column(name = "location_name")
     private String locationName;
 
+
     @ManyToOne
     @JoinColumn(name = "region_id", nullable = false)
+    @EqualsAndHashCode.Exclude
     private Region region;
 }

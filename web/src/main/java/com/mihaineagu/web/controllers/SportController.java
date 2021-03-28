@@ -74,4 +74,16 @@ public class SportController {
             return sportDTO1;
         }).get();
     }
+
+    @DeleteMapping(path = "/sports/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteSport(
+            @PathVariable(name = "id") Long id,
+            @RequestParam(name = "recursive", defaultValue = "false") Boolean recursive) {
+        if (recursive){
+            sportService.deleteSportRecursive(id);
+        }else {
+            sportService.deleteSport(id);
+        }
+    }
 }

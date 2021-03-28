@@ -3,7 +3,11 @@ package com.mihaineagu.web.exceptionhandling;
 import com.mihaineagu.web.exceptions.DuplicateEntityExceptions;
 import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.jni.Error;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,6 +17,8 @@ import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class RestExceptionHandler  {
+
+    private static final Logger logger = LogManager.getLogger(RestExceptionHandler.class);
 
     @ExceptionHandler(DuplicateEntityExceptions.class)
     protected ResponseEntity<ErrorResponse> handleConflict(DuplicateEntityExceptions exception) {
@@ -46,9 +52,10 @@ public class RestExceptionHandler  {
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handlePageNotFound(){
+    protected ResponseEntity<ErrorResponse> handlePageNotFound(Exception e){
 
 
+        logger.error(e);
         ErrorResponse response = new ErrorResponse();
         response.setErrorMessage("Page not found!");
         response.setErrorCode("NOT_FOUND");
@@ -57,7 +64,7 @@ public class RestExceptionHandler  {
     }
 
     @ExceptionHandler(Error.class)
-    protected ResponseEntity<ErrorResponse> handleServerError(){
+    protected ResponseEntity<ErrorResponse> handleServerError() {
 
 
         ErrorResponse response = new ErrorResponse();
@@ -65,6 +72,26 @@ public class RestExceptionHandler  {
         response.setErrorCode("InternalError");
         response.setTimestamp(LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    protected ResponseEntity<ErrorResponse> handleNothingToDelete(Exception e) {
+
+        logger.error(e);
+        ErrorResponse response = new ErrorResponse();
+        response.setErrorMessage("Please check the request and try again.");
+        response.setErrorCode(HttpStatus.BAD_REQUEST.toString());
+        response.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    protected  ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(){
+        ErrorResponse response = new ErrorResponse();
+        response.setErrorMessage("Please check the request and try again.");
+        response.setErrorCode(HttpStatus.BAD_REQUEST.toString());
+        response.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 }

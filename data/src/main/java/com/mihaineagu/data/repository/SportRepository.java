@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface SportRepository extends JpaRepository<Sport, Long> {
 
     Optional<Sport> findBySportType(String sportType);
+
+    void deleteById(Long id);
 }

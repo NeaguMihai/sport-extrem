@@ -29,4 +29,8 @@ public interface RegionService {
     Optional<RegionDTO> saveRegion(RegionDTO region, CountryDTO country);
 
     Optional<RegionDTO> saveRegion(Region region);
+
+    void deleteRegion(Long id);
+
+    void deleteRegionRecursive(Long id);
 }

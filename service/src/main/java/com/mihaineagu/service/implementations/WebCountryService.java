@@ -1,13 +1,14 @@
 package com.mihaineagu.service.implementations;
 
 import com.mihaineagu.data.api.v1.mappers.CountryMapper;
+import com.mihaineagu.data.api.v1.mappers.RegionMapper;
 import com.mihaineagu.data.api.v1.models.CountryDTO;
-import com.mihaineagu.data.api.v1.models.RegionListDTO;
 import com.mihaineagu.data.domain.Country;
 import com.mihaineagu.data.repository.CountryRepository;
 import com.mihaineagu.service.interfaces.CountryService;
 import com.mihaineagu.service.interfaces.RegionService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,14 +16,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class WebCountryService implements CountryService {
 
     private String uri;
     private final CountryRepository countryRepository;
     private final RegionService regionService;
     private final CountryMapper countryMapper;
+    private final RegionMapper regionMapper;
 
-    public WebCountryService(CountryRepository countryRepository, RegionService regionService, CountryMapper countryMapper) {
+    public WebCountryService(CountryRepository countryRepository, RegionService regionService, CountryMapper countryMapper, RegionMapper regionMapper) {
+        this.regionMapper = regionMapper;
         this.uri = "";
         this.countryRepository = countryRepository;
         this.regionService = regionService;
@@ -101,6 +105,18 @@ public class WebCountryService implements CountryService {
         Country country = countryRepository.save(toBeSaved);
 
         return countryMapper.countryToDTO(country);
+    }
+
+    @Override
+    public void deleteCountry(Long id) {
+
+        countryRepository.deleteById(id);
+
+    }
+
+    @Override
+    public void deleteCountryRecursive(Long id) {
+
     }
 
 
