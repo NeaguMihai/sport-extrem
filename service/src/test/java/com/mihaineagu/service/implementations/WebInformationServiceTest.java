@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,12 +22,12 @@ import static org.mockito.Mockito.when;
 
 class WebInformationServiceTest {
 
-    public static final String END_1 = "end1";
-    public static final String START_1 = "start1";
+    public static final String END_1 = "10-10-2000";
+    public static final String START_1 = "01-01-2000";
     public static final long ID = 1L;
     public static final int PRICE = 100;
     InformationService informationService;
-
+    SimpleDateFormat sdf;
     LocationMapper locationMapper;
     SportMapper sportMapper;
 
@@ -34,6 +36,7 @@ class WebInformationServiceTest {
 
     @BeforeEach
     void setUp() {
+        sdf = new SimpleDateFormat("dd-MM-yyyy");
         informationRepository = mock(InformationRepository.class);
         locationMapper = LocationMapper.INSTANCE;
         sportMapper = SportMapper.INSTANCE;
@@ -41,10 +44,10 @@ class WebInformationServiceTest {
     }
 
     @Test
-    void getInformationByIdFoundTest() {
+    void getInformationByIdFoundTest() throws ParseException {
         Information returnedInformation = new Information();
-        returnedInformation.setStartPeriod(START_1);
-        returnedInformation.setEndPeriod(END_1);
+        returnedInformation.setStartPeriod(sdf.parse(START_1));
+        returnedInformation.setEndPeriod(sdf.parse(END_1));
         returnedInformation.setLocationId(ID);
         returnedInformation.setPrice(PRICE);
 
@@ -53,8 +56,8 @@ class WebInformationServiceTest {
         Optional<InformationDTO> returnedDTO = informationService.getInformationById(ID,ID);
 
         assertTrue(returnedDTO.isPresent());
-        assertEquals(END_1, returnedDTO.get().getEndingPeriod());
-        assertEquals(START_1, returnedDTO.get().getStartingPeriod());
+        assertEquals(sdf.parse(END_1), returnedDTO.get().getEndingPeriod());
+        assertEquals(sdf.parse(START_1), returnedDTO.get().getStartingPeriod());
         assertEquals(PRICE, returnedDTO.get().getPrice());
     }
 

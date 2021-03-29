@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,14 +29,15 @@ class WebSportServiceTest {
     public static final String SPORT_1 = "sport1";
     public static final long ID = 1L;
     public static final int PRICE1 = 100;
-    public static final String START_PERIOD = "startPeriod";
-    public static final String END_PERIOD = "EndPeriod";
     public static final long ID1 = 2L;
     public static final int PRICE2 = 200;
     public static final String SPORT_2 = "Sport2";
+    public static final String DATE1 = "11-11-2000";
+    public static final String DATE2 = "01-01-2000";
     final String URI = "/mock/";
 
     SportService sportService;
+    SimpleDateFormat sdf;
 
     @Mock
     SportRepository sportRepository;
@@ -49,7 +52,7 @@ class WebSportServiceTest {
     void setUp() {
         sportRepository = mock(SportRepository.class);
         informationService = mock(InformationService.class);
-
+        sdf = new SimpleDateFormat("dd-MM-yyyy");
         sportMapper = SportMapper.INSTANCE;
         informationMapper = InformationMapper.INSTANCE;
 
@@ -97,12 +100,12 @@ class WebSportServiceTest {
     }
 
     @Test
-    void getSportAndInformationDTOSingleInstanceTest() {
+    void getSportAndInformationDTOSingleInstanceTest() throws ParseException {
         Information information1 = new Information();
         information1.setSportId(ID);
         information1.setPrice(PRICE1);
-        information1.setStartPeriod(START_PERIOD);
-        information1.setEndPeriod(END_PERIOD);
+        information1.setStartPeriod(sdf.parse(DATE1));
+        information1.setEndPeriod(sdf.parse(DATE2));
 
         Sport sport = new Sport();
         sport.setId(ID);
@@ -122,18 +125,18 @@ class WebSportServiceTest {
     }
 
     @Test
-    void getSportAndInformationDTOMultiInstanceTest() {
+    void getSportAndInformationDTOMultiInstanceTest() throws ParseException {
         Information information1 = new Information();
         information1.setSportId(ID);
         information1.setPrice(PRICE1);
-        information1.setStartPeriod(START_PERIOD);
-        information1.setEndPeriod(END_PERIOD);
+        information1.setStartPeriod(sdf.parse(DATE1));
+        information1.setEndPeriod(sdf.parse(DATE2));
 
         Information information2 = new Information();
         information2.setSportId(ID1);
         information2.setPrice(PRICE2);
-        information2.setStartPeriod(START_PERIOD);
-        information2.setEndPeriod(END_PERIOD);
+        information2.setStartPeriod(sdf.parse(DATE1));
+        information2.setEndPeriod(sdf.parse(DATE2));
 
 
         Sport sport = new Sport();

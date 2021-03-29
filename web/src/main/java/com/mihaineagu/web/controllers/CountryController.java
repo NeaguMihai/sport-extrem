@@ -58,7 +58,7 @@ public class CountryController {
 
     @PostMapping(path = "/countries")
     @ResponseStatus(HttpStatus.CREATED)
-    public CountryDTO addNewCountry(@RequestBody CountryDTO countryDTO) {
+    public CountryDTO addNewCountry(@Valid @RequestBody CountryDTO countryDTO) {
         countryDTO.setUri(null);
 
         Optional<CountryDTO> returned = countryService.addNewCountry(countryDTO);
@@ -70,7 +70,7 @@ public class CountryController {
     @PutMapping("/countries/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CountryDTO updateCountry(
-            @RequestBody CountryDTO countryDTO,
+            @RequestBody @Valid CountryDTO countryDTO,
             @PathVariable(name = "id") Long id) {
 
         Optional<CountryDTO> returned = countryService.findCountryByIdWithoutRegion(id);

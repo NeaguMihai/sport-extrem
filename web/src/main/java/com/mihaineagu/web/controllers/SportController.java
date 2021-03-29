@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -44,7 +45,7 @@ public class SportController {
 
     @PostMapping(path = "/sports", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public SportDTO addNewSport(@RequestBody @NonNull SportDTO sportDTO) {
+    public SportDTO addNewSport(@RequestBody @Valid SportDTO sportDTO) {
         sportDTO.setUri(null);
         Optional<SportDTO> returned = sportService.addNewSport(sportDTO);
 
@@ -57,7 +58,7 @@ public class SportController {
     @ResponseStatus(HttpStatus.OK)
     public SportDTO updateSport(
             @PathVariable(name = "id") Long id,
-            @RequestBody SportDTO sportDTO) {
+            @RequestBody @Valid SportDTO sportDTO) {
         Optional<SportDTO> returned = sportService.findById(id);
 
         returned.orElseThrow(RessourceNotFoundException::new);

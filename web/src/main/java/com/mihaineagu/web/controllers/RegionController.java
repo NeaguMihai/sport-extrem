@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -63,7 +64,7 @@ public class RegionController {
     @ResponseStatus(HttpStatus.CREATED)
     public RegionDTO addNewRegion(
             @PathVariable(name = "country_id") Long id,
-            @RequestBody RegionDTO regionDTO) {
+            @RequestBody @Valid RegionDTO regionDTO) {
 
         Optional<CountryDTO> countryOptional = countryService.findCountryByIdWithoutRegion(id);
 
@@ -86,7 +87,7 @@ public class RegionController {
     @ResponseStatus(HttpStatus.OK)
     public RegionDTO updateRegoin(
             @PathVariable(name = "id") Long id,
-            @RequestBody RegionDTO regionDTO) {
+            @RequestBody @Valid RegionDTO regionDTO) {
 
         Optional<Region> returned = regionService.findRegionById(id);
 

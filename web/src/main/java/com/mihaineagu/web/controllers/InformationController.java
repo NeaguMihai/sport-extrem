@@ -14,9 +14,11 @@ import com.mihaineagu.web.exceptions.FailSaveException;
 import com.mihaineagu.web.exceptions.RessourceNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +44,10 @@ public class InformationController {
     public LocationDTO addNewSportToLocation(
             @PathVariable(name = "location_id") Long locationId,
             @PathVariable(name = "sport_id") Long sportId,
-            @RequestBody InformationDTO informationDTO) {
+            @RequestBody @Valid InformationDTO informationDTO) {
+
+        if (informationDTO.getStartingPeriod().compareTo(informationDTO.getEndingPeriod()) >=0)
+            throw new InvalidDataAccessApiUsageException("Dates are invalid");
 
         Optional<Location> locationOptional = locationService.findLocation(locationId);
         Optional<SportDTO> sportOptional = sportService.findById(sportId);
@@ -54,7 +59,6 @@ public class InformationController {
 
         toBeSaved.ifPresent(e -> {throw new DuplicateEntityExceptions();});
 
-            //TODO: ADD validation for dates
             Optional<InformationDTO> savedInfo = informationService
                     .saveInformation(informationDTO,
                             locationOptional.get(),
@@ -63,8 +67,13 @@ public class InformationController {
             savedInfo.orElseThrow(FailSaveException::new);
 
             sportOptional.get().setInformation(savedInfo.get());
-            locationOptional.map(LocationMapper.INSTANCE::locationToDTO).get().setSports(List.of(sportOptional.get()));
-            return locationOptional.map(LocationMapper.INSTANCE::locationToDTO).get();
+            return locationOptional
+                    .map(LocationMapper.INSTANCE::locationToDTO)
+                    .map(locationDTO -> {
+                       locationDTO.setSports(List.of(sportOptional.get()));
+                        return locationDTO;
+                    }).get();
+
 
     }
 
@@ -73,7 +82,9 @@ public class InformationController {
     public LocationDTO updateInformation(
         @PathVariable(name = "location_id") Long locationId,
         @PathVariable(name = "sport_id") Long sportId,
-        @RequestBody InformationDTO informationDTO) {
+        @RequestBody @Valid InformationDTO informationDTO) {
+        if (informationDTO.getStartingPeriod().compareTo(informationDTO.getEndingPeriod()) >=0)
+            throw new InvalidDataAccessApiUsageException("Dates are invalid");
 
         Optional<LocationDTO> locationOptional = locationService.findByIdWithoutSports(locationId);
         Optional<SportDTO> sportOptional = sportService.findById(sportId);

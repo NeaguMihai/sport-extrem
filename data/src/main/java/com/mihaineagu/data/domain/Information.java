@@ -1,8 +1,11 @@
 package com.mihaineagu.data.domain;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Data
 @Entity
@@ -18,21 +21,27 @@ public class Information {
     @Column(name = "sport_id")
     private Long sportId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @MapsId("location_id")
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @MapsId("sport_id")
     @JoinColumn(name = "sport_id")
     private Sport sport;
 
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "start_period")
-    private String startPeriod;
+    private Date startPeriod;
 
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "end_period")
-    private String endPeriod;
+    private Date endPeriod;
 
     @Column(name = "price")
     private Integer price;

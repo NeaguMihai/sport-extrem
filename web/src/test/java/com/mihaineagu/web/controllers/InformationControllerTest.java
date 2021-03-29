@@ -1,9 +1,8 @@
 package com.mihaineagu.web.controllers;
 
 import com.mihaineagu.data.api.v1.models.InformationDTO;
-import com.mihaineagu.data.api.v1.models.LocationDTO;
-import com.mihaineagu.data.api.v1.models.RegionDTO;
 import com.mihaineagu.data.api.v1.models.SportDTO;
+import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.service.interfaces.InformationService;
 import com.mihaineagu.service.interfaces.LocationService;
 import com.mihaineagu.service.interfaces.SportService;
@@ -17,10 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,6 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureDataJpa
 class InformationControllerTest extends AbstractControllerTest{
 
+    public static final String ENDING = "10-10-2021";
+    public static final String STARTING = "01-01-2020";
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
     @Autowired
     MockMvc mockMvc;
 
@@ -45,7 +47,13 @@ class InformationControllerTest extends AbstractControllerTest{
     @Test
     void addNewSportToLocationMissingLocationTest() throws Exception {
 
-        InformationDTO informationDTO = new InformationDTO();
+        InformationDTO informationDTO = InformationDTO
+                .builder()
+                .price(100)
+                .endingPeriod(sdf.parse(ENDING))
+                .startingPeriod(sdf.parse(STARTING))
+                .build();
+
 
         when(sportService.findById(anyLong())).thenReturn(Optional.empty());
         when(locationService.findByIdWithoutSports(anyLong())).thenReturn(Optional.empty());
@@ -61,10 +69,17 @@ class InformationControllerTest extends AbstractControllerTest{
     @Test
     void addNewSportToLocationDuplicateInformationTest() throws Exception {
 
-        InformationDTO informationDTO = new InformationDTO();
+
+        InformationDTO informationDTO = InformationDTO
+                .builder()
+                .price(100)
+                .endingPeriod(sdf.parse(ENDING))
+                .startingPeriod(sdf.parse(STARTING))
+                .build();
+
 
         when(sportService.findById(anyLong())).thenReturn(Optional.of(new SportDTO()));
-        when(locationService.findByIdWithoutSports(anyLong())).thenReturn(Optional.of(new LocationDTO()));
+        when(locationService.findLocation(anyLong())).thenReturn(Optional.of(new Location()));
         when(informationService.getInformationById(anyLong(),anyLong())).thenReturn(Optional.of(informationDTO));
 
         mockMvc.perform(post("/api/v1/locations/1/sports/2")
@@ -78,10 +93,16 @@ class InformationControllerTest extends AbstractControllerTest{
     @Test
     void addNewSportToLocationFailSaveTest() throws Exception {
 
-        InformationDTO informationDTO = new InformationDTO();
+        InformationDTO informationDTO = InformationDTO
+                .builder()
+                .price(100)
+                .endingPeriod(sdf.parse(ENDING))
+                .startingPeriod(sdf.parse(STARTING))
+                .build();
+
 
         when(sportService.findById(anyLong())).thenReturn(Optional.of(new SportDTO()));
-        when(locationService.findByIdWithoutSports(anyLong())).thenReturn(Optional.of(new LocationDTO()));
+        when(locationService.findLocation(anyLong())).thenReturn(Optional.of(new Location()));
         when(informationService.getInformationById(anyLong(),anyLong())).thenReturn(Optional.empty());
         when(informationService.saveInformation(any(), any(), any())).thenReturn(Optional.empty());
 
@@ -96,10 +117,16 @@ class InformationControllerTest extends AbstractControllerTest{
     @Test
     void addNewSportToLocationSuccessTest() throws Exception {
 
-        InformationDTO informationDTO = new InformationDTO();
+        InformationDTO informationDTO = InformationDTO
+                .builder()
+                .price(100)
+                .endingPeriod(sdf.parse(ENDING))
+                .startingPeriod(sdf.parse(STARTING))
+                .build();
+
 
         when(sportService.findById(anyLong())).thenReturn(Optional.of(new SportDTO()));
-        when(locationService.findByIdWithoutSports(anyLong())).thenReturn(Optional.of(new LocationDTO()));
+        when(locationService.findLocation(anyLong())).thenReturn(Optional.of(new Location()));
         when(informationService.getInformationById(anyLong(),anyLong())).thenReturn(Optional.empty());
         when(informationService.saveInformation(any(), any(), any())).thenReturn(Optional.of(informationDTO));
 

@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,17 +66,14 @@ public class LocationController {
     @PostMapping(path = "/regions/{region_id}/locations")
     @ResponseStatus(HttpStatus.CREATED)
     public LocationDTO addNewLocation(
-            @RequestBody LocationDTO locationDTO,
+            @RequestBody @Valid LocationDTO locationDTO,
             @PathVariable(name = "region_id") Long id) {
 
         Optional<RegionDTO> regionOptional = regionService.findByIdWithoutLocation(id);
 
-        try{
+
         regionOptional.orElseThrow(RessourceNotFoundException::new);
 
-        }catch (RessourceNotFoundException e) {
-            logger.error(e.getMessage());
-        }
         locationDTO.setUri(null);
         if(locationService.findIfExistent(locationDTO, id))
             throw new DuplicateEntityExceptions();
@@ -91,7 +89,7 @@ public class LocationController {
     @PutMapping(path = "/locations/{id}")
     public LocationDTO updateLocation(
             @PathVariable(name = "id") Long id,
-            @RequestBody LocationDTO locationDTO) {
+            @RequestBody @Valid LocationDTO locationDTO) {
         Optional<Location> returned = locationService.findById(id);
 
         returned.orElseThrow(RessourceNotFoundException::new);

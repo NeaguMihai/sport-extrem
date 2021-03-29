@@ -4,6 +4,13 @@ import com.mihaineagu.data.api.v1.models.InformationDTO;
 import com.mihaineagu.data.domain.Location;
 import com.mihaineagu.data.domain.Information;
 import org.junit.jupiter.api.Test;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,14 +23,15 @@ class InformationMapperTest {
     public static final String LOCATION_NAME = "locationName";
     public static final String URI = "1";
     InformationMapper informationMapper = InformationMapper.INSTANCE;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyy");
 
     @Test
-    void locationSportToInformation() {
+    void locationSportToInformation() throws ParseException {
         Information information = new Information();
         information.setLocation(new Location());
         information.setPrice(PRICE);
-        information.setStartPeriod(START_PERIOD);
-        information.setEndPeriod(END_PERIOD);
+        information.setStartPeriod(sdf.parse("10-10-2000"));
+        information.setEndPeriod(sdf.parse("10-10-2001"));
 
         InformationDTO informationDTO = informationMapper.informationToDTO(information);
 
@@ -34,11 +42,11 @@ class InformationMapperTest {
     }
 
     @Test
-    void informationToLocationSport() {
+    void informationToLocationSport() throws ParseException {
         InformationDTO informationDTO = InformationDTO
                 .builder()
-                .endingPeriod(END_PERIOD)
-                .startingPeriod(START_PERIOD)
+                .endingPeriod(sdf.parse("10-10-2000"))
+                .startingPeriod(sdf.parse("10-10-2000"))
                 .price(PRICE)
                 .build();
         Information information = informationMapper.DTOToInformation(informationDTO);

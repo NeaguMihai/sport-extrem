@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -13,7 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 public class CountryDTO {
 
+    @NotEmpty
+    @Size(min = 1, message = "The name cannot be empty")
     private String countryName;
+
     private String uri;
+
     private List<RegionDTO> regions;
 }
