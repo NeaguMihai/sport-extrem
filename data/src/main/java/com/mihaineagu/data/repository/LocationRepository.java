@@ -16,11 +16,4 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
         Optional<Location> findLocationByRegionIdAndLocationName(Long id, String name);
 
-        void deleteByRegionId( Long id);
-
-        @Modifying
-        @Query(value = "DELETE FROM location WHERE region_id IN(SELECT id FROM region WHERE country_id =:id)", nativeQuery = true)
-        void deleteAllByRegionIdIn(@Param("id") Long id);
-
-
 }

@@ -29,6 +29,7 @@ import java.util.Optional;
 public class InformationController {
 
     private static final Logger logger = LogManager.getLogger(InformationController.class);
+    private final String LOCATION_URI = "/api/v1/locations/";
     private final InformationService informationService;
     private final LocationService locationService;
     private final SportService sportService;
@@ -71,7 +72,8 @@ public class InformationController {
                     .map(LocationMapper.INSTANCE::locationToDTO)
                     .map(locationDTO -> {
                        locationDTO.setSports(List.of(sportOptional.get()));
-                        return locationDTO;
+                       locationDTO.setUri(LOCATION_URI + locationDTO.getUri());
+                       return locationDTO;
                     }).get();
 
 

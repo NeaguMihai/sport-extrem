@@ -6,8 +6,11 @@ import com.mihaineagu.data.api.v1.models.SportDTO;
 import com.mihaineagu.data.domain.Information;
 import com.mihaineagu.data.domain.Location;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface InformationService {
 
@@ -23,4 +26,5 @@ public interface InformationService {
 
     void deleteInformationById(Long locationId, Long sportId);
 
+    Set<LocationDTO> getResultFromAndroidRequest(List<String> sport_names, LocalDate startDate, LocalDate endDate);
 }

@@ -64,7 +64,10 @@ public class CountryController {
         Optional<CountryDTO> returned = countryService.addNewCountry(countryDTO);
 
         returned.orElseThrow(DuplicateEntityExceptions::new);
-        return returned.get();
+        return returned.map(countryDTO1 -> {
+            countryDTO1.setUri(URI + countryDTO1.getUri());
+            return countryDTO1;
+        }).get();
     }
 
     @PutMapping("/countries/{id}")

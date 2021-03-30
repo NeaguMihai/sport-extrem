@@ -16,8 +16,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("webInformationService")
 @Transactional
@@ -78,6 +79,45 @@ public class WebInformationService implements InformationService {
 
         logger.info(informationRepository.deleteByLocationIdAndSportId(locationId, sportId));
 
+    }
+
+    @Override
+    public Set<LocationDTO> getResultFromAndroidRequest(List<String> sport_names, LocalDate startDate, LocalDate endDate) {
+        List<Object[]> result = informationRepository.getInformationBySportsNamesAndDate(sport_names, startDate, endDate);
+        if (result.isEmpty())
+            return new HashSet<>();
+        Map<Long, LocationDTO> locationMap = new HashMap<>();
+        result.forEach( record -> {
+            Long locationId = Long.valueOf(record[0].toString());
+            LocationDTO mapLocationDTO;
+            if(!locationMap.containsKey(locationId)){
+                mapLocationDTO = LocationDTO
+                        .builder()
+                        .uri("/api/v1/locations/" + locationId.toString())
+                        .locationName(record[1].toString())
+                        .sports(new LinkedList<>())
+                        .build();
+                locationMap.put(locationId, mapLocationDTO);
+            }else {
+                mapLocationDTO = locationMap.get(locationId);
+
+            }
+            InformationDTO informationDTO = InformationDTO
+                    .builder()
+                    .price(Integer.parseInt(record[2].toString()))
+                    .build();
+
+            SportDTO sportDTO = SportDTO
+                    .builder()
+                    .sportType(record[4].toString())
+                    .uri("/api/v1/locations/" + record[3].toString())
+                    .information(informationDTO)
+                    .build();
+
+            mapLocationDTO.getSports().add(sportDTO);
+
+        });
+        return new HashSet<>(locationMap.values());
     }
 
 }
