@@ -6,9 +6,9 @@ spring:
   datasource:
     initialization-mode: never
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3308/atta_problem
-    username: atta_admin
-    password: mockpassword
+    url: jdbc:mysql://tpi-spring-db.mysql.database.azure.com:3306/db
+    username: tpirootadmin@tpi-spring-db
+    password: Pas%)4Ts5
 server:
   error:
     include-message: always
