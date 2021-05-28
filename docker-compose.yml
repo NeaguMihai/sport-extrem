@@ -1,0 +1,35 @@
+version: '3.4'
+services:
+  mysql-db:
+    image: mysql:latest
+    ports:
+      - "3308:3306"
+    networks:
+      - spring-boot-mysql-network
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=mockpassword
+    volumes:
+      - ./db-data:/docker-entrypoint-initdb.d
+
+  spring-app:
+    image: nosezilla/spring-sports:1.0
+    restart: on-failure
+    depends_on:
+      - mysql-db
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=mockpassword
+    links:
+      - mysql-db:mysql-db
+    networks:
+      - spring-boot-mysql-network
+networks:
+  spring-boot-mysql-network:
+    driver: bridge
