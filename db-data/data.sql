@@ -1,7 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `db`;
--- MySQL dump 10.13  Distrib 8.0.22, for Linux (x86_64)
---
+CREATE DATABASE  IF NOT EXISTS `db` 
 -- Host: 127.0.0.1    Database: atta_problem
 -- ------------------------------------------------------
 -- Server version	8.0.22

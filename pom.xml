@@ -21,6 +21,8 @@
     <packaging>pom</packaging>
 
     <properties>
+        <jib-maven-plugin.version>2.5.2</jib-maven-plugin.version>
+        <docker.image.prefix>wingtiptoysregistry.azurecr.io</docker.image.prefix>
         <java.version>11</java.version>
     </properties>
     <dependencies>
@@ -68,6 +70,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+
         </plugins>
     </build>
 
