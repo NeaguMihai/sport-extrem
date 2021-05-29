@@ -6,7 +6,7 @@ spring:
   datasource:
     initialization-mode: never
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql-db:3306/db
+    url: jdbc:mysql://tpi-spring-db.mysql.database.azure.com:3306/db?useSSL=true&requireSSL=false
     username: tpirootadmin@tpi-spring-db
     password: Pas%)4Ts5
 server:
